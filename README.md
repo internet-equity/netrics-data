@@ -1,9 +1,8 @@
 # Netrics Data - Continuous Measurements of Internet Performance at the Access Network
 
-
 <p align='center'><img src='assets/images/netrics-data-image.png' width='750' height='400' alt='Image of Netrics data displayed on a Grafana Dashboard' vertical-align='middle'></p>
 
-This repository contains information and links to datasets collected by Netrics Internet measurement devices which the Internet Equity research team at the Data Science Institute deployed across Chicago starting in 2021.
+This repository contains documentation about and links to datasets collected by Netrics Internet measurement devices which the Internet Equity research team at the Data Science Institute deployed across Chicago starting in 2021. Supporting resources to assist those that want to use the data is also available.
 
 This repository is organized as follows:
 - **documentation**: Find documentation about the data, the deployment of Netrics devices, and the pipeline that moves data from devices to a central data store.
