@@ -9,11 +9,11 @@ This repository is organized as follows:
 - **example-notebooks**: Find Jupyter notebooks with example code for working with the Netrics data.
 - **netrics-data-releases**: Find information about Netrics data releases, including links where you can download the data.
 
-# Download the Data
+## Download the Data
 
-*Version 1.0* - TBD
+### [*Version 1.0*](./netrics-data-releases/version-1.0.md) (May 9, 2022)
 
-# Additional Links
+## Additional Links
 
 - Visit our portal for the initiative [here](insert-link-to-portal)
 - Visit our webpage on the Data Science Institute [website](http://datascience.uchicago.edu/research/internet-access-equity-initiative/)
