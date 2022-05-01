@@ -7,11 +7,10 @@ This repository contains documentation about and links to datasets collected by 
 This repository is organized as follows:
 - **documentation**: Find documentation about the data, the deployment of Netrics devices, and the pipeline that moves data from devices to a central data store.
 - **example-notebooks**: Find Jupyter notebooks with example code for working with the Netrics data.
-- **netrics-data-releases**: Find information about Netrics data releases, including links where you can download the data.
 
 ## Download the Data
 
-### [*Version 1.0*](./netrics-data-releases/version-1.0.md) (May 9, 2022)
+### [*Version 1.0*](https://github.com/chicago-cdac/netrics-data/releases/tag/data) (May 9, 2022)
 
 ## Additional Links
 
