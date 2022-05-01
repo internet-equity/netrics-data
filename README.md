@@ -6,7 +6,8 @@ This repository contains documentation about and links to datasets collected by 
 
 This repository is organized as follows:
 - **documentation**: Find documentation about the data, the deployment of Netrics devices, and the pipeline that moves data from devices to a central data store.
-- **example-notebooks**: Find Jupyter notebooks with example code for working with the Netrics data.
+- **example-notebooks**: Find Jupyter notebooks with example code for working with the Netrics data and notebooks containing the analysis underlying the data stories on the portal.
+- **data**: Find datasets used in the data stories featured on the portal.
 
 ## Download the Data
 
