@@ -131,3 +131,4 @@ dmypy.json
 # data
 portal-data*
 .DS_Store
+/data/netrics
