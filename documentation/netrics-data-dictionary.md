@@ -34,12 +34,12 @@ Each CSV contains one month of data for all deployed devices for one of the foll
 
 ## Data Dictionary
 
-In this section we describe each field of each CSV (measurement).
+In this section we describe each field of each CSV (measurement). **Note on time zones** All times in each file are in US/Central time.
 
 ### [Device Count](#data-documentation):
 
 1. `Time`: The date and time at which the test was taken.
-2. `n_devs`: The number of devices actively connected to a household's local network.
+2. `No. of Devices`: The number of devices actively connected to a household's local network.
 3. `Measurement`: The measurement identifier.
 4. `ID`: The access network/participant's unique ID.
 

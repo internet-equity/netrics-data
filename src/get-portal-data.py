@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import argparse
 from influxdb_client import InfluxDBClient
+import os
 
 
 class Client:
@@ -18,7 +19,7 @@ class Client:
                                      token=c['token'], org=c['org'])
 
         self.base_query = (f'from(bucket:"netrics-prod0")'
-                       f'|> range(start: {start}, stop: {stop})')
+                       f'|> range(start: {start}T00:00:00Z, stop: {stop}T00:00:00Z)')
 
 
     def ookla(self):
@@ -59,7 +60,7 @@ class Client:
         df["_field"].replace({"speedtest_ndt7_download": "download",
                               "speedtest_ndt7_upload": "upload"}, inplace=True)
 
-        df = df.rename(columns={"_time": "Time", "_value": "Speed (Mb/s)",
+        df = df.rename(columns={"_time": "Time", "_value": "Speed",
                                 "_field": "Direction", "_measurement": "Tool"})
 
         return df
@@ -77,7 +78,7 @@ class Client:
         df["_field"].replace({"iperf_udp_download": "download",
                               "iperf_udp_upload": "upload"}, inplace=True)
 
-        df = df.rename(columns={"_time": "Time", "_value": "Speed (Mb/s)",
+        df = df.rename(columns={"_time": "Time", "_value": "Speed",
                                 "_field": "Direction", "_measurement": "Tool"})
 
         return df
@@ -131,7 +132,7 @@ class Client:
                                         'r._field == "Washington_DC_rtt_avg_ms" or '
                                         'r._field == "Atlanta_rtt_avg_ms" or '
                                         'r._field == "Denver_rtt_avg_ms"))'
-                                    '|> filter(fn: (r) => (r._measurement == "ping_latency")'
+                                    '|> filter(fn: (r) => (r._measurement == "ping_latency" or r._measurement == "last_mile_rtt"))'
                                     '|> drop(columns:["meta_extended", "meta_extended_debhash", "meta_extended_dataver", "env", "_start","_stop"])')
 
         df = self.exec_query(query)
@@ -170,7 +171,7 @@ class Client:
 
         df = self.exec_query(query).drop("_measurement", axis=1)
 
-        df = df.rename(columns={"_time": "Time", "_value": "Speed (Mbps)",
+        df = df.rename(columns={"_time": "Time", "_value": "Speed",
                                 "_field": "Measurement",
                                 "install": "ID"})
         df['Origin'] = df['Measurement'].apply(lambda x: "Client" if "client" in x else "Netrics")
@@ -208,7 +209,7 @@ class Client:
 
         df = self.exec_query(query)
 
-        df = df.rename(columns={"_time": "Time", "_value": "n_devs",
+        df = df.rename(columns={"_time": "Time", "_value": "No. of Devices",
                                 "_field": "Period", "_measurement": "Measurement",
                                 "install": "ID"})
         df.drop(['Period'], axis=1, inplace=True)
@@ -280,18 +281,34 @@ def convert_time(df):
     df = df.set_index("Time")
     return df.tz_convert('US/Central').reset_index()
 
-def main():
+def main(start, stop):
 
     # Initialize client to query DB
-    c = Client("config.yaml")
+    print("Configuring client...\n")
+    c = Client("src/config.yaml", start, stop)
+    print("Client established.\n")
 
-    convert_time(c.speedtest()).to_csv("speedtest.csv")
-    convert_time(c.latency_under_load()).to_csv("lul.csv")
-    convert_time(c.ping_latency()).to_csv("ping_latency.csv")
-    convert_time(c.dns_latency()).to_csv("dns_latency.csv")
-    convert_time(c.device_count()).to_csv("device_count.csv")
-    convert_time(c.hops_to_google()).to_csv("hops_to_google.csv")
-    convert_time(c.lan_bw()).to_csv("lan_bw.csv")
+    print("Checking existence of output directory...\n")
+    data_path = f"data/netrics/{start}-{stop}"
+    if not os.path.exists(data_path):
+        print(f"Output directory does not exist. Creating directory: {data_path}")
+        os.mkdir(data_path)
+
+    print("Pulling speed test data...\n")
+    convert_time(c.speedtest()).to_csv(f"data/netrics/{start}-{stop}/speedtest.csv", index=False)
+    print("Speed test data pulled. Pulling latency under load data...\n")
+    convert_time(c.latency_under_load()).to_csv(f"data/netrics/{start}-{stop}/lul.csv", index=False)
+    print("Latency under load data pulled. Pulling ping latency data...\n")
+    convert_time(c.ping_latency()).to_csv(f"data/netrics/{start}-{stop}/ping_latency.csv", index=False)
+    print("Ping latency data pulled. Pulling DNS latency data...\n")
+    convert_time(c.dns_latency()).to_csv(f"data/netrics/{start}-{stop}/dns_latency.csv", index=False)
+    print("DNS latency data pulled. Pulling device count data...\n")
+    convert_time(c.device_count()).to_csv(f"data/netrics/{start}-{stop}/device_count.csv", index=False)
+    print("Device count data pulled. Pulling hops data...\n")
+    convert_time(c.hops_to_google()).to_csv(f"data/netrics/{start}-{stop}/hops_to_google.csv", index=False)
+    print("Hops data pulled. Pulling LAN bandwidth data...\n")
+    convert_time(c.lan_bw()).to_csv(f"data/netrics/{start}-{stop}/lan_bw.csv", index=False)
+    print("LAN bandwidth data pulled. Files saved. Done.\n")
 
 
 if __name__ == "__main__":
@@ -301,6 +318,6 @@ if __name__ == "__main__":
     parser.add_argument('-b', '--start_month', default="2021-10-01", help='Start date of the query')
     parser.add_argument('-e', '--stop_month', default="2021-11-01", help='Stop date of the query')
     args = parser.parse_args()
-    print(args.stop_month)
+    print(f"Pulling data from {args.start_month} to {args.stop_month}...\n")
 
-    # main()
+    main(args.start_month, args.stop_month)
