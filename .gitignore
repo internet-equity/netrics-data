@@ -132,3 +132,6 @@ dmypy.json
 portal-data*
 .DS_Store
 /data/netrics
+
+# configs
+src/config.yaml
