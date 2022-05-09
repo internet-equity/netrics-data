@@ -12,7 +12,7 @@ This repository is organized as follows:
 
 ## Download the Data
 
-### [*Version 1.0*](https://github.com/chicago-cdac/netrics-data/releases/tag/data) (May 9, 2022)
+### [*Version 1.0*](https://github.com/chicago-cdac/netrics-data/releases/tag/netrics-data) (May 9, 2022)
 
 ## Additional Links
 
