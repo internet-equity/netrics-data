@@ -2,12 +2,13 @@
 
 <p align='center'><img src='assets/images/netrics-data-hero.jpg' width='750' height='400' alt='Image of a map with data displayed on it and a heat map of Netrics device deployments with some charts of netrics data displayed on a Grafana dashboard and accompanying text that says Internet Equity Initiative data about and analysis of Internet performance and reliability with actionable insights to address inequity in communities across the United States.' vertical-align='middle'></p>
 
-This repository contains documentation about and links to datasets collected by Netrics Internet measurement devices which the Internet Equity research team at the Data Science Institute deployed across Chicago starting in 2021. Supporting resources to assist those that want to use the data are also available.
+This repository contains documentation about and links to datasets collected by Netrics Internet measurement devices which the [Internet Equity Initiative](internetequity.uchicago.edu) research team at the [Data Science Institute](datascience.uchicago.edu) deployed across Chicago starting in late 2021. Supporting resources to assist those that want to use the data are also available.
 
 This repository is organized as follows:
 - **documentation**: Find documentation about the data, the deployment of Netrics devices, and the pipeline that moves data from devices to a central data store.
-- **example-notebooks**: Find Jupyter notebooks with example code for working with the Netrics data and notebooks containing the analysis underlying the data stories on the portal.
-- **data**: Find datasets used in the data stories featured on the portal.
+- **example-notebooks**: Find Jupyter notebooks with example code for working with the Netrics data and notebooks containing the analysis underlying some of the data stories on the portal.
+- **data**: Find datasets used in some of the data stories featured on the portal.
+- **src**: Find scripts used to pull data from InfluxDB.
 
 ## Download the Data
 
@@ -15,7 +16,7 @@ This repository is organized as follows:
 
 ## Additional Links
 
-- Visit our portal for the initiative [here](insert-link-to-portal)
+- Visit our [portal](internetequity.uchicago.edu) for the initiative
 - Visit our webpage on the Data Science Institute [website](http://datascience.uchicago.edu/research/internet-access-equity-initiative/)
 - View the open-source code for the Netrics [software](https://github.com/chicago-cdac/nm-exp-active-netrics)
 
