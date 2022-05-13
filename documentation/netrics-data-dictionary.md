@@ -2,7 +2,7 @@
 
 The measurement data that we collect from Netrics Internet measurement devices deployed across Chicago are currently available as a set of comma-separated values (CSV) files, broken out by month and measurement. We also include a dataset that contains geographic (community areas and tracts) and selected survey data (i.e., ISP and speed tier)) for each device.
 
-Download the data (measurements and geographic-survey data) by going to our [releases](https://github.com/chicago-cdac/netrics-data/releases/tag/netrics-data) for this repository. Keep an eye on the releases for updates of the data. We plan to release new data monthly.
+Download the data (measurements and geographic-survey data) by going to our [releases](https://github.com/chicago-cdac/netrics-data/releases/tag/netrics-data-1-0) for this repository. Keep an eye on the releases for updates of the data. We plan to release new data monthly.
 
 ## Measurement Data
 
