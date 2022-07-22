@@ -17,7 +17,6 @@ This repository is organized as follows:
 ## Additional Links
 
 - Visit our [portal](https://internetequity.uchicago.edu/) for the initiative
-- Visit our webpage on the Data Science Institute [website](http://datascience.uchicago.edu/research/internet-access-equity-initiative/)
 - View the open-source code for the Netrics [software](https://github.com/chicago-cdac/nm-exp-active-netrics)
 
 Please [create an issue](https://github.com/chicago-cdac/netrics-data/issues) if you want to flag errors in the data or make suggestions on how to improve the data for the research team.
