@@ -134,15 +134,3 @@ The per-month cost that the subscriber reported paying for their Internet servic
 ### `community`
 
 The community area where the device was deployed.
-
-### `geoid10`
-
-Geoid (2010) where the device was deployed.
-
-### `tractce10`
-
-The census tract where the device was deployed.
-
-### `countyfp10`
-
-The county FIPS code where the device was deployed.
