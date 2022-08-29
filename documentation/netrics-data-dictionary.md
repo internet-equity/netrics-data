@@ -20,17 +20,17 @@ Each CSV contains one month of data for all deployed devices for one of the foll
 
 6. **Ping Latency** (`ping_latency.csv`): The latency to a set of popular websites and geographically distributed servers. (See the description of latency in *Latency Under Load* in #5 above.) The ping latency is a standard measurement of latency. We collect ping latency data for:
 
-- www.google.com
-- www.amazon.com
-- www.youtube.com
-- www.facebook.com
-- www.wikipedia.com
-- www.chicagotribune.com
-- www.suntimes.com
-- Other servers
-   - University of Chicago
-   - last mile
-   - Measurement Lab test servers in Washington, DC, Atlanta, and Denver
+   - www.google.com
+   - www.amazon.com
+   - www.youtube.com
+   - www.facebook.com
+   - www.wikipedia.com
+   - www.chicagotribune.com
+   - www.suntimes.com
+   - Other servers
+      - University of Chicago
+      - last mile
+      - Measurement Lab test servers in Washington, DC, Atlanta, and Denver
 
 7. **Speed Tests** (`speedtest.csv`): A household's wired Internet upload and download bandwidth in megabits per second (Mbps). Internet bandwidth is a measure of how fast your Internet connection is. The more bandwidth that your Internet connection has, the more information it can handle at any given time and the faster it can send that information. We measure Internet bandwidth using three popular tools—Ookla, NDT7, and iPerf3.
 
@@ -38,14 +38,14 @@ Each CSV contains one month of data for all deployed devices for one of the foll
 
 In this section we describe each field of each CSV (measurement). **Note on time zones** All times in each file are in US/Central time.
 
-### [Device Count](#data-documentation):
+### [Device Count](#measurement-data):
 
 1. `Time`: The date and time at which the test was taken.
 2. `No. of Devices`: The number of devices actively connected to a household's local network.
 3. `Measurement`: The measurement identifier.
 4. `ID`: The access network/participant's unique ID.
 
-### [DNS Latency](#data-documentation):
+### [DNS Latency](#measurement-data):
 
 1. `Time`: The date and time at which the test was taken. 
 2. `RTT`: The aggregated query time in milliseconds.
@@ -53,14 +53,14 @@ In this section we describe each field of each CSV (measurement). **Note on time
 4. `ID`: The access network/participant's unique ID.
 5. `Type`: The aggregation method (either max or average).
 
-### [Hops to Google](#data-documentation):
+### [Hops to Google](#measurement-data):
 
 1. `Time`: The date and time at which the test was taken. 
 2. `Hops`: The number of hops to Google.
 3. `Measurement`: The measurement identifier.
 4. `ID`: The access network/participant's unique ID.
 
-### [LAN Bandwidth](#data-documentation):
+### [LAN Bandwidth](#measurement-data):
 
 1. `Time`: The date and time at which the test was taken.
 2. `Speed`: The bandwidth in Mbps.
@@ -68,7 +68,7 @@ In this section we describe each field of each CSV (measurement). **Note on time
 4. `Measurement`: The measurement identifier.
 5. `ID`: The access network/participant's unique ID.
 
-### [Latency Under Load](#data-documentation):
+### [Latency Under Load](#measurement-data):
 
 1. `Time`: The date and time at which the test was taken.
 2. `RTT`: The average round-trip time to the destination in milliseconds.
@@ -78,7 +78,7 @@ In this section we describe each field of each CSV (measurement). **Note on time
 6. `Direction`: The direction (uplink or downlink) that was saturated for the test.
 7. `Destination`: The destination pinged in the test.
 
-### [Ping Latency](#data-documentation):
+### [Ping Latency](#measurement-data):
 
 1. `Time`: The date and time at which the test was taken.
 2. `RTT`: The latency in milliseconds to the destination.
@@ -87,7 +87,7 @@ In this section we describe each field of each CSV (measurement). **Note on time
 5. `Measurement`: The measurement identifier.
 6. `ID`: The access network/participant's unique ID.
 
-### [Speed Tests](#data-documentation):
+### [Speed Tests](#measurement-data):
 
 1. `Time`: The date and time at which the test was taken.
 2. `Direction`: The direction (upload/download) of the test.
@@ -101,7 +101,7 @@ The geographic and survey data contains one row for each `device_id`. Note that 
 
 We generate the geographic data for this dataset by using the Google Maps API to geocode address data that we collect from our study participants. The accuracy of this geocoding has not been verified. We then do a spatial join to the [Chicago community area boundaries](https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Community-Areas-current-/cauq-8yn6) available from the Chicago Open Data Portal.
 
-**Warning** The data included in this dataset are collected through a survey that the research team administers through the study. Not all participants who enroll in the study and receive a device complete the survey. Devices may contain missing values for some of the survey fields.
+**WARNING** The data included in this dataset are collected through a survey that the research team administers through the study. Not all participants who enroll in the study and receive a device complete the survey. Devices may contain missing values for some of the survey fields.
 
 ## Geographic and Survey Data Dictionary
 
