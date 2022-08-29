@@ -2,7 +2,7 @@
 
 The measurement data that we collect from Netrics Internet measurement devices deployed across Chicago are currently available as a set of comma-separated values (CSV) files, broken out by month and measurement. We also include a dataset that contains geographic (community areas and tracts) and selected survey data (i.e., ISP and speed tier)) for each device.
 
-Download the data (measurements and geographic-survey data) by going to our [releases](https://github.com/chicago-cdac/netrics-data/releases/tag/netrics-data-1-0) for this repository. Keep an eye on the releases for updates of the data. We plan to release new data monthly.
+Download the data (measurements and geographic and survey data) by going to our [releases](https://github.com/chicago-cdac/netrics-data/releases/tag/netrics-data-1-2) for this repository. Keep an eye on the releases for updates of the data. We plan to release new data monthly.
 
 ## Measurement Data
 
@@ -99,7 +99,9 @@ In this section we describe each field of each CSV (measurement). **Note on time
 
 The geographic and survey data contains one row for each `device_id`. Note that not all devices that appear in the measurement data have a corresponding row in this dataset. Not all of our devices have associated geographic information and/or survey responses.
 
-We generate the geographic data for this dataset by using the Google Maps API to geocode address data that we collect from our study participants. The accuracy of this geocoding has not been verified. We then do a spatial join to the [Chicago community area boundaries](https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Community-Areas-current-/cauq-8yn6) available and a spatial join to the [2010 US Census tracts](https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Census-Tracts-2010/5jrd-6zik) from the Chicago Open Data Portal.
+We generate the geographic data for this dataset by using the Google Maps API to geocode address data that we collect from our study participants. The accuracy of this geocoding has not been verified. We then do a spatial join to the [Chicago community area boundaries](https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Community-Areas-current-/cauq-8yn6) available from the Chicago Open Data Portal.
+
+**Warning** The data included in this dataset are collected through a survey that the research team administers through the study. Not all participants who enroll in the study and receive a device complete the survey. Devices may contain missing values for some of the survey fields.
 
 ## Geographic and Survey Data Dictionary
 
