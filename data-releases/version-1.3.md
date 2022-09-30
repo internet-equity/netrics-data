@@ -23,7 +23,7 @@ Click on the link for each month below to download a zipfile containing Netrics 
 - *[May 2022](https://uchicago.box.com/s/58m0zrqd69p9pme6j1pju6o7wh3qwh9w)*
 - *[June 2022](https://uchicago.box.com/s/4hz6no6ixha3jipig2c2plul1d5zgf7z)*
 - *[July 2022](https://uchicago.box.com/s/g9nfl9j58jc9vdva1jepio9aey5jeqek)*
-- *[August 2022](#)* - **NEW DATA**
+- *[August 2022](https://uchicago.box.com/s/bha2orav0ze2klh03jfead6653ouph44)* - **NEW DATA**
 
 **[Geographic and Survey Data](https://uchicago.box.com/s/uqfh8u78zz5kab2lpggy4ko2cestmnhn)**
 
