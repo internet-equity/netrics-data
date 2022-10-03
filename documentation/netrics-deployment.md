@@ -17,7 +17,7 @@ Participants keep the devices installed for any where between one month and seve
 
 ## Netrics Deployments To Date
 
-As of August 2022, the research team has conducted five deployments of Netrics devices in Chicago since October 2021, totalling over 100 devices deployed across 31 community areas. The map below shows which community areas in Chicago we have deployed devices and the total number of devices deployed since October 2021. Not all the devices that were deployed since October 2021 are still active. As of August 2022, we have approximately 60 devices active across Chicago. Neighborhoods with the greatest coverage of devices include South Shore, Logan Square, and Lake View.
+As of September 2022, the research team has conducted five deployments of Netrics devices in Chicago since October 2021, totaling over 100 devices deployed across 31 community areas. The map below shows which community areas in Chicago we have deployed devices and the total number of devices deployed since October 2021. Not all the devices that were deployed since October 2021 are still active. As of September 2022, we have approximately 60 devices active across Chicago. Neighborhoods with the greatest coverage of devices include South Shore, Logan Square, and Lake View.
 
 <p align='center'>
     <!-- <h3>Netrics Device Deployments by Community Area - May 2022</h3> -->

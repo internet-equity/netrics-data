@@ -1,11 +1,11 @@
 # Netrics Data Release — Version 1.3
-**Date**: September 29, 2022
+**Date**: October 3, 2022
 
 Introducing the fourth release of Internet performance data collected through the Netrics platform developed by researchers at the University of Chicago Data Science Institute!
 
 ## What's in this release?
 
-The data in our version 1.3 release includes new measurement data for the month of September 2022.
+The data in our version 1.3 release includes new measurement data for the months of August and September 2022.
 
 ## Download the Data
 
@@ -24,6 +24,7 @@ Click on the link for each month below to download a zipfile containing Netrics 
 - *[June 2022](https://uchicago.box.com/s/4hz6no6ixha3jipig2c2plul1d5zgf7z)*
 - *[July 2022](https://uchicago.box.com/s/g9nfl9j58jc9vdva1jepio9aey5jeqek)*
 - *[August 2022](https://uchicago.box.com/s/bha2orav0ze2klh03jfead6653ouph44)* - **NEW DATA**
+- *[September 2022](#)* - **NEW DATA**
 
 **[Geographic and Survey Data](https://uchicago.box.com/s/uqfh8u78zz5kab2lpggy4ko2cestmnhn)**
 
