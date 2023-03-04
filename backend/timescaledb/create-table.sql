@@ -42,6 +42,7 @@ CREATE TABLE latency (
   direction   TEXT		NULL, 
   protocol    TEXT              NOT NULL,
   target      TEXT		NOT NULL,
+  pktloss     DOUBLE PRECISION  NULL, 
   method      TEXT		NOT NULL,
   zip         INT		NULL,
   isp         TEXT              NULL,
@@ -70,6 +71,7 @@ CREATE TABLE latency2 (
   direction   TEXT		NULL, 
   protocol    TEXT              NOT NULL,
   target      TEXT		NOT NULL,
+  pktloss     DOUBLE PRECISION  NULL, 
   method      TEXT              NOT NULL,
   value       DOUBLE PRECISION  NULL,
   CONSTRAINT fk_device
@@ -85,10 +87,10 @@ select distinct(s.deviceid), s.isp, 'chicago' as deployment, s.zip from speedtes
 insert into speedtest2 (time,deviceid,tool,direction,protocol,target,pktloss,retrans,value)
 select s.time,d.deviceid,s.tool,s.direction,s.protocol,s.target,s.pktloss,s.retrans,s.value from speedtest s, device d where s.deviceid = d.label; 
 
-insert into latency2 (time,deviceid,tool,direction,protocol,target,method,value)
-select l.time,d.deviceid,l.tool,l.direction,l.protocol,l.target,l.method,l.value from latency l, device d where l.deviceid = d.label;
+insert into latency2 (time,deviceid,tool,direction,protocol,target,pktloss,method,value)
+select l.time,d.deviceid,l.tool,l.direction,l.protocol,l.target,l.pktloss,l.method,l.value from latency l, device d where l.deviceid = d.label;
 
-create or replace view latency3 as select l.time,d.label,l.tool,l.direction,l.protocol,l.target,d.isp,d.deployment,d.zip,community.label as community,l.method,l.value 
+create or replace view latency3 as select l.time,d.label,l.tool,l.direction,l.protocol,l.target,d.isp,d.deployment,d.zip,community.label as community,l.pktloss,l.method,l.value 
 from latency2 l, device d
 left join community ON d.communityid = community.communityid
 where l.deviceid = d.deviceid;
@@ -111,6 +113,13 @@ CREATE UNIQUE INDEX device_idx ON device (deviceid);
 -- where l.method = 'Avg'
 -- group by l.community, l.isp;
 
+-- select DISTINCT(l.label), avg(value) as avg_v 
+-- from latency3 l 
+-- where l.tool='ping_latency' and l.target = 'Last Mile' 
+-- group by l.label order by avg_v;
+
+-- select sum(count1), isp from (select count(distinct(s.label)) as count1, s.isp as isp
+-- from speedtest3 s group by s.label, s.isp) as table1 group by count1, isp; 
 
 -- **** DROP TABLES ****
 
