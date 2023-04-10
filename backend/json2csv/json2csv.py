@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-import os, sys
-import json, csv
+import os, sys, gzip
+import json, csv, re
 import traceback
 from os import path
 from datetime import datetime, timezone
 from dateutil import tz
+from dateutil import parser as duparser
 import sqlite3
 from anonymizeip import anonymize_ip
 from collections import OrderedDict
 from threading import Thread, Lock
+
+DNS_LATENCY_TARGET = "8.8.8.8"
 
 mutex = Lock()
 
@@ -48,11 +51,12 @@ faac,att,60615
 1bba,xfinity,60623
 ... 
 '''
-mapf = r'id_isp_zip2.csv'
+mapf = r'id_isp_zip3.csv'
 mapd = {}
 speedtest_csvfile_prefix = "netrics_speedtest"
 latency_csvfile_prefix = "netrics_latency"
 counter_csvfile_prefix = "netrics_counter"
+survey_csvfile_prefix = "netrics_survey"
 
 iperf3_target = 'abbott.cs.chicago.edu'
 
@@ -72,10 +76,20 @@ def t_isp(d):
         return "None"
     return r
 
+def t_topic(d):
+    r = None
+    try:
+      r =  mapd[(d[len(d) - 4:])][2]
+    except Exception as e:
+        return "None"
+    return r
+
+
+
 with open(mapf, 'r') as f:
   reader = csv.reader(f)
   for r in reader:
-      mapd[r[0]]=[ r[1], r[2] ]
+      mapd[r[0]]=[ r[1], r[2], r[3] ]
 
 ### speedtest
 #  time        TIMESTAMPTZ       NOT NULL,
@@ -278,6 +292,33 @@ def netrics_csvwrite_pinglatency(speedtest_writer, latency_writer,
       pass
       continue 
 
+def netrics_csvwrite_dnslatency(speedtest_writer, latency_writer,
+                                  mtime, id, topic, mjson,
+                                  ipaddr_anon, ipaddr_changed):
+  """
+  Write CSV for DNS Latency data point, icmp
+
+  :param speedtest_writer: csvwriter ref
+  :param latency_writer: csvwriter ref
+  :param mtime: measurement timestamp
+  :param id: device id
+  :param m: measurement json
+  """
+  for k in mjson.keys():
+      try:
+          m=re.search(r"^dns_query_([a-z]+)_ms", k)
+          if m is not None:
+             target = DNS_LATENCY_TARGET
+             direction = "rtt"
+             protocol = "icmp"
+             method = m.group(1)
+             row = [mtime, id, 'dns_latency', direction, protocol, target, None,
+                    method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+             latency_writer.writerow(row)
+      except (KeyError, IndexError):
+          pass
+          continue
+
 def netrics_csvwrite_oplat(speedtest_writer, latency_writer,
                                   mtime, id, topic, mjson,
                                   ipaddr_anon, ipaddr_changed):
@@ -444,6 +485,7 @@ latency_header = ['time', 'deviceid', 'tool', 'direction',
 counter_header = ['time', 'deviceid', 'tool', 'method', 'target',
                                 'zip', 'isp', 'value', 'topic', 'anonipaddr', 'ipaddrchanged']
 
+
 try:
     os.mkdir(csvdir)
 except OSError as error:
@@ -478,6 +520,7 @@ def gen_csvwriter(csvwriter,date, filedata):
        if not counter_csvfile_exists: counter_csvwriter.writerow(counter_header)
        csvwriter[d]['counter'] = counter_csvwriter
        csvwriter[d]['counter_file'] = counter_csvfile
+
        csvwriter[d]['flist']=[filedata]
     else:
        csvwriter[d]['flist'].append(filedata)
@@ -491,11 +534,7 @@ rootDir = sys.argv[1]
 
 last_ipaddr = {}
 
-count = 0
-device_check = {}
-for dirName, subdirList, fileList in os.walk(rootDir):
-  for fname in fileList:
-    if fname.endswith(".json"):
+def getpathdata(dirName, fname, ftype):
       jfile = os.path.join(dirName, fname)
       path_date=os.path.dirname(dirName)
       path_dev=os.path.dirname(path_date)
@@ -503,9 +542,25 @@ for dirName, subdirList, fileList in os.walk(rootDir):
       dev=os.path.basename(path_dev)
       topic = os.path.basename(path_topic)
       date = os.path.basename(path_date)
-      gen_csvwriter(csvwriter, date, {'dev': dev, 'jfile': jfile, 'fname': fname,
-                                      'topic': topic, 'date': date})
+      return {'dev': dev, 'jfile': jfile, 'fname': fname,
+              'topic': topic, 'date': date, "ftype": ftype}
+
+count = 0
+device_check = {}
+for dirName, subdirList, fileList in os.walk(rootDir):
+  for fname in fileList:
+    if fname.endswith(".json.gz"):
+      pathdata = getpathdata(dirName, fname, "json.gz")
+      gen_csvwriter(csvwriter, pathdata['date'], pathdata)
+    elif fname.endswith(".csv.gz"):
+      pathdata = getpathdata(dirName, fname, "csv.gz")
+      gen_csvwriter(csvwriter, pathdata['date'], pathdata)
+    elif fname.endswith(".json"):
+      pathdata = getpathdata(dirName, fname, "json")
+      gen_csvwriter(csvwriter, pathdata['date'], pathdata)
       count += 1
+      dev = pathdata['dev']
+      topic = pathdata['topic']
       if dev not in last_ipaddr.keys():
           last_ipaddr[dev] = None
       try:
@@ -516,6 +571,7 @@ for dirName, subdirList, fileList in os.walk(rootDir):
             t_isp(dev) != "None" else False}
         device_check[dev]['topic'] = topic
 
+print(device_check)
 stop_here = False
 for k in device_check.keys():
   desc = "OK" if device_check[k]['checked'] else f"Missing data in {mapf}"
@@ -523,44 +579,106 @@ for k in device_check.keys():
   print(f"{k} ({device_check[k]['topic']}) {desc}")
 
 if stop_here: sys.exit(0)
-
-
 print(f"PROCESSED: {processed} + {processed_error}(failed) / {count}")
-#for dirName, subdirList, fileList in os.walk(rootDir):
-#  for fname in fileList:
-#    if fname.endswith(".json"):
+
+def process_jsongz(fd, topic, speedtest_writer):
+    id = fd['dev']
+    with gzip.open(fd['jfile'], mode='rt', newline='') as f:
+        try:
+            j = json.load(f)
+        except ValueError:
+            print(f"WARN: failed to load json.gz {fd['jfile']}")
+            return
+        if j.get('Download', {}).get('ServerMeasurements') is None:
+            print(f"WARN: no 'Download' in {fd['jfile']}")
+            return
+        try:
+            ts       = format_date(int(duparser.parse(j['StartTime']).timestamp()))
+            tcp_info = j['Download']['ServerMeasurements'][-1]['TCPInfo']
+            wifi_bw  = 8 * tcp_info['BytesAcked'] / tcp_info['ElapsedTime']
+        except (KeyError, IndexError, ValueError) as err:
+            print(f"WARN: error ({err}) {fd['jfile']}")
+            return
+
+        row = [ts, id, 'local_dash_server', 'download', 'tcp', 'netrics.local',
+               None, None, t_zip(id), t_isp(id),
+               wifi_bw, topic, None, None]
+        speedtest_writer.writerow(row)
+
+
+def format_date(d):
+    utc_date = datetime.fromtimestamp(d)
+    utc_tmp = utc_date.replace(tzinfo=from_zone)
+    utc = utc_tmp.strftime('%Y-%m-%d %H:%M:%S')
+    return utc
+
+def process_csvgz(fd, topic, speedtest_writer, counter_writer):
+    id = fd['dev']
+    with gzip.open(fd['jfile'], mode='rt', newline='') as f:
+        try:
+            records = list(csv.reader(f))
+            if fd['topic'] == 'trial':
+                for r in records:
+                    try:
+                        ts = format_date(int(r[0]))
+                        size_bytes = int(r[1])
+                        period_ms = int(r[2])
+                    except:
+                        print(f"WARN: trial data error {fd['jfile']}")
+                        continue
+                    row = [ts, id, 'local_dash_client', 'download', 'tcp', 'netrics.local',
+                           None, None, t_zip(id), t_isp(id),
+                           8 * size_bytes / period_ms, topic, None, None]
+                    speedtest_writer.writerow(row)
+            if fd['topic'] == 'survey':
+                for r in records:
+                    try:
+                        ts = format_date(int(r[0]))
+                        subjective = int(r[1])
+                    except:
+                        print(f"WARN: trial data error {fd['jfile']}")
+                        continue
+                    row = [ts, id, 'score', 'subjective', None,
+                           t_zip(id), t_isp(id), subjective, topic, None, None]
+                    counter_writer.writerow(row)
+        except EOFError as eof:
+            print(f"WARN: error reading {fd['jfile']}")
 
 def thread_csv_month(d, cw):
-    #for d,cw  in csvwriter.items():
     global processed
     global processed_error
     print(f"processing {d}")
     for fd in cw['flist']:
-      #jfile = os.path.join(dirName, fname)
-      #path_date=os.path.dirname(dirName)
-      #path_dev=os.path.dirname(path_date)
-      #dev=os.path.basename(path_dev)
       fname = fd['fname']
       jfile = fd['jfile']
       dev = fd['dev']
       date = fd['date']
-      topic = fd['topic']
+      #topic = fd['topic']
+      topic = t_topic(dev)
+      ftype = fd['ftype']
 
       try:
           visited[dev][fname]
           continue
       except KeyError:
           pass
-      #path_topic=os.path.dirname(path_dev)
-      #topic = os.path.basename(path_topic)
-      #date=os.path.basename(os.path.dirname(dirName))
       ipaddr_changed = 0
       ipaddr_anon = None
 
-      speedtest_csvwriter, latency_csvwriter, counter_csvwriter = get_csvwriter(csvwriter, date)
+      speedtest_csvwriter,\
+             latency_csvwriter,\
+             counter_csvwriter = get_csvwriter(csvwriter, date)
 
       if processed % 100 == 0:
           print(f"PROCESSED({d}): {processed} / {count}")
+
+      if ftype == 'csv.gz':
+          process_csvgz(fd, topic, speedtest_csvwriter, counter_csvwriter)
+          continue
+
+      if ftype == 'json.gz':
+          process_jsongz(fd, topic, speedtest_csvwriter)
+          continue
 
       with open(jfile) as jf:
           try:
@@ -575,10 +693,11 @@ def thread_csv_month(d, cw):
               print("WARNING *** j['Meta']['Id']({id}) != dev({dev})")
               id = dev
 
-          utc_date = datetime.fromtimestamp(j['Meta']['Time'])
-          utc_tmp = utc_date.replace(tzinfo=from_zone)
-          utc = utc_tmp.strftime('%Y-%m-%d %H:%M:%S')
-          #central = utc.astimezone(to_zone)
+          utc = format_date(j['Meta']['Time'])
+          #utc_date = datetime.fromtimestamp(j['Meta']['Time'])
+          #utc_tmp = utc_date.replace(tzinfo=from_zone)
+          #utc = utc_tmp.strftime('%Y-%m-%d %H:%M:%S')
+          ##central = utc.astimezone(to_zone)
           ipaddr = None
           try:
               ipaddr = j['Measurements']['ipquery']['ipv4']
@@ -642,6 +761,19 @@ def thread_csv_month(d, cw):
                                            ipaddr_anon, ipaddr_changed)
           except KeyError:
               pass
+
+
+          ################ DNS_LATENCY #################
+          try:
+              mjson = j['Measurements']['dns_latency']
+              netrics_csvwrite_dnslatency(speedtest_csvwriter,
+                                           latency_csvwriter,
+                                           utc, id,
+                                           topic, mjson,
+                                           ipaddr_anon, ipaddr_changed)
+          except KeyError:
+              pass
+
 
           ################ IPERF3 #################
           try:
