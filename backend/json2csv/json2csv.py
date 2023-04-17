@@ -10,6 +10,21 @@ import sqlite3
 from anonymizeip import anonymize_ip
 from collections import OrderedDict
 from threading import Thread, Lock
+### json2influx
+from influxdb_client import InfluxDBClient, Point
+from influxdb_client.client.write_api import SYNCHRONOUS
+
+influxclient = None
+if os.environ.get("INFLUXDB_TOKEN") is not None:
+    bucket = "netrics-prod0"
+    token = os.environ.get("INFLUXDB_TOKEN")
+    org = "DSI"
+    url = "https://us-east-1-1.aws.cloud2.influxdata.com"
+    influxclient = InfluxDBClient(url=url, token=token, org=org)
+
+    write_api = influxclient.write_api(write_options=SYNCHRONOUS)
+    query_api = influxclient.query_api()
+
 
 DNS_LATENCY_TARGET = "8.8.8.8"
 
@@ -644,6 +659,75 @@ def process_csvgz(fd, topic, speedtest_writer, counter_writer):
         except EOFError as eof:
             print(f"WARN: error reading {fd['jfile']}")
 
+CONF_INC_EXTRA = False
+def insert_influx(jfname):
+  try:
+    with open(jfname) as fjson:
+        j = json.load(fjson)
+        if 'Meta' not in j:
+          print("WARN: (no Meta) malformed json. Continuing.. ")
+          return
+        if 'Measurements' not in j:
+          print("WARN: (no Measurements) malformed json. Continuing.. ")
+          return
+
+        meta_id = j['Meta']['Id'] if j['Meta']['Id'] is not None else 'default'
+        #print(f"\t{meta_id}")
+        meta_time = float(j['Meta']['Time'])
+        #print(f"\t{meta_time}")
+        meta_enable = False
+        if 'Extended' in j['Meta'].keys():
+          meta_enable = True
+          if CONF_INC_EXTRA:
+             meta_extended_gitlog = j['Meta']['Extended']['gitlog']
+             print(f"\t{meta_extended_gitlog}")
+             meta_extended_annotation = j['Meta']['Extended']['Annotation'] \
+             if j['Meta']['Extended']['Annotation'] is not None else ""
+             print(f"\t{meta_extended_annotation}")
+          try:
+            meta_extended_dataver = int(j['Meta']['Extended']['dataver'])
+          except:
+            print("WARN: DATAVER malformed.")
+            meta_extended_dataver = 0
+          #print(f"\t{meta_extended_dataver}")
+          meta_extended_debhash = j['Meta']['Extended']['debhash']
+          #print("\t{} ({})".format(meta_extended_debhash[-7:], meta_extended_debhash))
+        for k in j['Measurements'].keys():
+          #print("-->"+k+ " " + ("+" if type(j['Measurements'][k]) == dict else ""))
+          p = Point(k)
+          p.tag("install", meta_id)
+          #p.tag("env", "dev")
+          if meta_enable:
+            #p.tag("meta_extended_gitlog", meta_extended_gitlog)
+            p.tag("meta_extended_dataver", meta_extended_dataver)
+            p.tag("meta_extended_debhash", meta_extended_debhash[-7:])
+            #p.tag("meta_extended_annotation", meta_extended_annotation)
+          if type(j['Measurements'][k]) == dict:
+            for measurement in j['Measurements'][k].keys():
+              try:
+                value = float(j['Measurements'][k][measurement])
+              except:
+                value = j['Measurements'][k][measurement]
+              p.field(measurement, value)
+          else:
+            try:
+              value = float(j['Measurements'][k])
+            except:
+              value = j['Measurements'][k]
+            p.field(measurement, value)
+          p.time(datetime.fromtimestamp(meta_time))
+          try:
+              write_api.write(bucket=bucket, record=p)
+          except Exception as e:
+              print(e)
+              print(e, file=sys.stderr)
+              pass
+  except Exception as e:
+    print(e)
+    print(e, file=sys.stderr)
+ 
+
+
 def thread_csv_month(d, cw):
     global processed
     global processed_error
@@ -656,6 +740,9 @@ def thread_csv_month(d, cw):
       #topic = fd['topic']
       topic = t_topic(dev)
       ftype = fd['ftype']
+
+      if fd['ftype'] == 'json' and influxclient is not None:
+          insert_influx(jfile)
 
       try:
           visited[dev][fname]
