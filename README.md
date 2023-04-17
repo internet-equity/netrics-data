@@ -28,7 +28,7 @@ This repository is organized as follows:
 | 2022Q2  | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2022Q2.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2022Q2.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2022Q2.tgz) |
 | 2022Q3  | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2022Q3.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2022Q3.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2022Q3.tgz) |
 | 2022Q4  | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2022Q4.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2022Q4.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2022Q4.tgz) | 
-| 2023Q1  | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2023Q1.tgz) (TBU) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2023Q1.tgz) (TBU) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2023Q1.tgz) (TBU) |
+| 2023Q1  | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2023Q1.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2023Q1.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2023Q1.tgz) |
 
 ## Additional Links
 
