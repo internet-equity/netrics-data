@@ -26,27 +26,47 @@ CREATE TABLE speedtest (
   deviceid    TEXT              NOT NULL,
   tool        TEXT              NOT NULL, 
   direction   TEXT              NOT NULL,
-  protocol    TEXT		NULL,
-  target      TEXT		NULL,
+  protocol    TEXT		          NULL,
+  target      TEXT              NULL,
   pktloss     DOUBLE PRECISION  NULL, 
   retrans     DOUBLE PRECISION  NULL, 
-  zip         INT		NULL,
+  zip         INT               NULL,
   isp         TEXT              NULL,
-  value       DOUBLE PRECISION  NULL 
+  value       DOUBLE PRECISION  NULL,
+  deployment  TEXT              NULL, 
+  ipaddr      INET              NULL,
+  ipaddrchanged INT             NULL
 );
 
 CREATE TABLE latency (
   time        TIMESTAMPTZ       NOT NULL,  
   deviceid    TEXT              NOT NULL,
   tool        TEXT              NOT NULL,
-  direction   TEXT		NULL, 
+  direction   TEXT		          NULL, 
   protocol    TEXT              NOT NULL,
-  target      TEXT		NOT NULL,
+  target      TEXT		          NULL,
   pktloss     DOUBLE PRECISION  NULL, 
-  method      TEXT		NOT NULL,
-  zip         INT		NULL,
+  method      TEXT		          NOT NULL,
+  zip         INT		            NULL,
   isp         TEXT              NULL,
-  value       DOUBLE PRECISION  NULL
+  value       DOUBLE PRECISION  NULL,
+  deployment  TEXT              NULL, 
+  ipaddr      INET              NULL,
+  ipaddrchanged INT             NULL
+);
+
+CREATE TABLE counter (
+  time        TIMESTAMPTZ       NOT NULL,  
+  deviceid    TEXT              NOT NULL,
+  tool        TEXT              NOT NULL,
+  method      TEXT              NOT NULL,
+  target      TEXT              NULL,
+  zip         INT               NULL,
+  isp         TEXT              NULL,
+  value       INT               NOT NULL,
+  deployment  TEXT              NULL,
+  ipaddr      INET              NULL,
+  ipaddrchanged INT             NULL
 );
 
 CREATE TABLE speedtest2 (
@@ -127,3 +147,5 @@ CREATE UNIQUE INDEX device_idx ON device (deviceid);
 -- drop table device cascade;
 -- drop table latency2 cascade;
 -- drop table speedtest2 cascade; 
+
+
