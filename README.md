@@ -40,3 +40,7 @@ Get all files with this [script](https://abbott.cs.uchicago.edu:8081/chicago/wge
 Please [create an issue](https://github.com/chicago-cdac/netrics-data/issues) if you want to flag errors in the data or make suggestions on how to improve the data for the research team.
 
 For questions about the above, contact us at [broadband-equity@lists.uchicago.edu](mailto:broadband-equity@lists.uchicago.edu).
+
+## License
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Netrics Data</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://internetequity.uchicago.edu/" property="cc:attributionName" rel="cc:attributionURL">Internet Equity Initiative</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
