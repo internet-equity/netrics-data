@@ -5,19 +5,12 @@
 This repository contains documentation about and links to datasets collected by Netrics Internet measurement devices which the [Internet Equity Initiative](https://internetequity.uchicago.edu/) research team at the [Data Science Institute](http://datascience.uchicago.edu/) deployed across Chicago starting in late 2021. Supporting resources to assist those that want to use the data are also available.
 
 This repository is organized as follows:
-- **[documentation](documentation)**: Find documentation about the data, the deployment of Netrics devices, and the pipeline that moves data from devices to a central data store.
-- **[example-notebooks](example-notebooks)**: Find Jupyter notebooks with example code for working with the Netrics data and notebooks containing the analysis underlying some of the data stories on the portal.
-- **[data](data)**: Find datasets used in some of the data stories featured on the portal.
-- **[src](src)**: Find scripts used to pull data from InfluxDB.
+- **[documentation](https://github.com/internet-equity/netrics-data/blob/main/documentation)**: Find documentation about the data, the deployment of Netrics devices, and the pipeline that moves data from devices to a central data store.
+- **[example-notebooks](https://github.com/internet-equity/netrics-data/blob/main/example-notebooks)**: Find Jupyter notebooks with example code for working with the Netrics data and notebooks containing the analysis underlying some of the data stories on the portal.
+- **[data](https://github.com/internet-equity/netrics-data/blob/main/data)**: Find datasets used in some of the data stories featured on the portal.
+- **[src](https://github.com/internet-equity/netrics-data/blob/main/src)**: Find scripts used to pull data from InfluxDB.
 
 ## Download the Data
-
-<!--
-### [*Version 1.0*](https://github.com/chicago-cdac/netrics-data/releases/tag/netrics-data-1-0) (May 9, 2022)
-### [*Version 1.1*](https://github.com/chicago-cdac/netrics-data/releases/tag/netrics-data-1-1) (July 22, 2022)
-### [*Version 1.2*](https://github.com/chicago-cdac/netrics-data/releases/tag/netrics-data-1-2) (August 29, 2022)
-### [*Version 1.3*](https://github.com/chicago-cdac/netrics-data/releases/tag/netrics-data-1-3) (October 3, 2022)
--->
 
 #### Chicago
 
