@@ -11,7 +11,6 @@ This repository contains documentation about and links to datasets collected by 
 - **[Deployment](./documentation/netrics-deployment.md)**: Read about how we deploy Netrics devices and where our devices are located.
 - **[Data Pipeline](./documentation/netrics-data-pipeline.md)**: Review our pipeline that moves data from devices to a central data store.
 - **[example-notebooks](https://github.com/internet-equity/netrics-data/blob/main/example-notebooks)**: Find Jupyter notebooks with example code for working with the Netrics data and notebooks containing the analysis underlying some of the data stories on the portal.
-- **[data](https://github.com/internet-equity/netrics-data/blob/main/data)**: Find datasets used in some of the data stories featured on the portal.
 
 ## Download the Data
 
