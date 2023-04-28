@@ -7,8 +7,6 @@ This repository contains documentation about and links to datasets collected by 
 This repository is organized as follows:
 - **[documentation](https://github.com/internet-equity/netrics-data/blob/main/documentation)**: Find documentation about the data, the deployment of Netrics devices, and the pipeline that moves data from devices to a central data store.
 - **[example-notebooks](https://github.com/internet-equity/netrics-data/blob/main/example-notebooks)**: Find Jupyter notebooks with example code for working with the Netrics data and notebooks containing the analysis underlying some of the data stories on the portal.
-- **[data](https://github.com/internet-equity/netrics-data/blob/main/data)**: Find datasets used in some of the data stories featured on the portal.
-- **[src](https://github.com/internet-equity/netrics-data/blob/main/src)**: Find scripts used to pull data from InfluxDB.
 
 ## Download the Data
 
@@ -25,9 +23,11 @@ This repository is organized as follows:
 
 Get all files with this [script](https://abbott.cs.uchicago.edu:8081/chicago/wgetall.sh).
 
+**[Geographic and Survey Data](https://uchicago.box.com/s/uqfh8u78zz5kab2lpggy4ko2cestmnhn)**
+
 ## Additional Links
 
-- Visit our [portal](https://internetequity.uchicago.edu/) for the initiative
+- Visit our [website](https://internetequity.uchicago.edu/) for the initiative
 - View the open-source code for the Netrics [software](https://github.com/chicago-cdac/nm-exp-active-netrics)
 
 Please [create an issue](https://github.com/chicago-cdac/netrics-data/issues) if you want to flag errors in the data or make suggestions on how to improve the data for the research team.
