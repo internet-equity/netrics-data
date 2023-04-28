@@ -18,6 +18,7 @@ The Latency measuments is structured as follows:
 
 | time | deviceid | tool | direction | protocol | target | pktloss | method | zip | isp | value | topic | anonipaddr | ipaddrchanged |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 The available tools for latency are:
 
@@ -32,6 +33,7 @@ The available tools for latency are:
 The Speedtest measuments is structured as follows:
 
 | time | deviceid | tool | direction | protocol | target | pktloss | retrans | zip | isp | value | topic | anonipaddr | ipaddrchanged |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 The available tools for speedtest are:
@@ -49,6 +51,7 @@ The available tools for speedtest are:
 The Coutner measuments is structured as follows:
 
 | time | deviceid | tool | method | target | zip | isp | value | topic | anonipaddr | ipaddrchanged |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 The available tools for counters are:

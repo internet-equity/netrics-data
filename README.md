@@ -23,7 +23,7 @@ This repository is organized as follows:
 
 Get all files with this [script](https://abbott.cs.uchicago.edu:8081/chicago/wgetall.sh).
 
-**[Geographic and Survey Data](https://uchicago.box.com/s/uqfh8u78zz5kab2lpggy4ko2cestmnhn)**
+Download the **[Geographic and Survey Data](https://uchicago.box.com/s/uqfh8u78zz5kab2lpggy4ko2cestmnhn)**
 
 ## Additional Links
 
