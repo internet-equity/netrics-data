@@ -12,6 +12,8 @@ This repository is organized as follows:
 
 #### Chicago
 
+**See the [data dictionary](https://github.com/internet-equity/netrics-data/blob/main/documentation/netrics-data-dictionary.md)** for more information about the datasets and data.
+
 | Quarter | Speedtest | Latency | Counters |
 | ---     | ---       | ---     | ---      |
 | 2021Q4  | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2021Q4.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2021Q4.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2021Q4.tgz) |
