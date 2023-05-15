@@ -9,36 +9,36 @@ assignees: ''
 
 ## 🐞 Bug Report:
 
-> ___Briefly describe the issue___
+[Briefly describe the issue]
 
-[___Description___]
+[Description]
 
 ### Current Behavior:
 
-> ___A clear and concise description of the current behavior you're experiencing.___
+[A clear and concise description of the current behavior you're experiencing.]
 
 ### Expected Behavior:
 
-> ___A clear and concise description of what you expected to happen.___
+[A clear and concise description of what you expected to happen.]
 
 ### Steps to Reproduce:
 
-> ___Provide a step-by-step guide to reproduce the issue. Include specific inputs, actions, or conditions necessary for the bug to occur.___
+[Provide a step-by-step guide to reproduce the issue. Include specific inputs, actions, or conditions necessary for the bug to occur.]
 
 ### Screenshots/Code Snippets:
 
-> ___If applicable, include any relevant screenshots or code snippets that help illustrate the issue.___
+[If applicable, include any relevant screenshots or code snippets that help illustrate the issue.]
 
 ### Environment:
 
-> ___Operating System: e.g., Windows, macOS, Linux___
->
-> ___Browser: if applicable___
->
-> ___Version: provide the version of the software, library, or framework where the bug occurs___
+[Operating System: e.g., Windows, macOS, Linux]
+
+[Browser: if applicable]
+
+[Version: provide the version of the software, library, or framework where the bug occurs]
 
 ### Additional Information:
 
-> ___Any additional information that might be helpful in resolving the issue.___
+[Any additional information that might be helpful in resolving the issue.]
 
 **Optional**: Add labels or assignees to the issue based on your project's guidelines.
