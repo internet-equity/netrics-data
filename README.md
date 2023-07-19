@@ -24,8 +24,12 @@ This repository is organized as follows:
 | 2023Q1  | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2023Q1.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2023Q1.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2023Q1.tgz) | [parquet.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2023Q1_parquet.tgz) | [parquet.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2023Q1_parquet.tgz) | [parquet.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2023Q1_parquet.tgz) |
 | 2023Q2  | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2023Q2.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2023Q2.tgz) | [csv.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2023Q2.tgz) | [parquet.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_speedtest_2023Q2_parquet.tgz) | [parquet.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_latency_2023Q2_parquet.tgz) | [parquet.tgz](https://abbott.cs.uchicago.edu:8081/chicago/netrics_counter_2023Q2_parquet.tgz) |
 
+##### Changelog
 
-Get all `csv` files with this [script](https://abbott.cs.uchicago.edu:8081/chicago/wgetallcsv.sh).
+* Past data (<2023Q2) has been regenerated to incorporate measurement error data
+* New data for 2023Q2
+
+Get all `csv` files with this [script](https://abbott.cs.uchicago.edu:8081/chicago/wgetallcsv.sh). <br>
 Get all `parquet` files with this [script](https://abbott.cs.uchicago.edu:8081/chicago/wgetallparquet.sh).
 
 Download the **[Geographic and Survey Data](https://uchicago.box.com/s/uqfh8u78zz5kab2lpggy4ko2cestmnhn)**
