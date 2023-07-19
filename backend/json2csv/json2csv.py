@@ -138,9 +138,51 @@ with open(mapf, 'r') as f:
 
 def clean(msg):
     if msg is not None:
-        msg=msg.replace("\n"," ")
-        msg=msg.replace("\r"," ")
+        if type(msg) is not str:
+            msg = f"{msg}"
+        msg = msg.replace("\n"," ")
+        msg = msg.replace("\r"," ")
     return msg
+
+
+def netrics_csvwrite_httping(latency_writer,
+                                  mtime, id, topic, mjson,
+                                  ipaddr_anon, ipaddr_changed):
+  """
+  Write CSV for HTTPing test
+
+  :param latency_writer: csvwriter ref
+  :param mtime: measurement timestamp
+  :param id: device id
+  :param m: measurement json
+  """
+  to_return = True
+  target = None
+  direction = "rtt"
+  protocol = "http"
+  pktloss = None
+  target = None
+  for k in mjson.keys():
+    target=k.split("_")[0]
+
+    try:
+        target=k.split("_")[0]
+        float(mjson[k])
+    except (ValueError, IndexError) as ve:
+        row = [mtime, id, 'httping', direction, protocol, target, pktloss,
+              None, t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson[k])]
+        latency_writer.writerow(row)
+        pass
+        continue
+ 
+    try:
+        method=k.split("_")[2]
+        row = [mtime, id, 'httping', direction, protocol, target, pktloss,
+              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
+        latency_writer.writerow(row)    
+    except (KeyError, IndexError):
+      pass
+      continue 
 
 def netrics_csvwrite_encrypteddns(latency_writer,
                                   mtime, id, topic, mjson,
@@ -906,7 +948,7 @@ def thread_csv_month(d, cw):
       ftype = fd['ftype']
 
       d1 = datetime.strptime(date, "%Y%m%d")
-      if d1 < datetime.strptime(date_to_process_after, "%Y%m%d"): continue
+      #if d1 < datetime.strptime(date_to_process_after, "%Y%m%d"): continue
 
       if fd['ftype'] == 'json' and influxclient is not None:
           insert_influx(jfile)
@@ -1091,6 +1133,17 @@ def thread_csv_month(d, cw):
                                           ipaddr_anon, ipaddr_changed)
           except KeyError:
               pass
+
+          ############# HTTPING ############
+          try:
+              mjson = j['Measurements']['httping']
+              netrics_csvwrite_httping(latency_csvwriter,
+                                          utc, id,
+                                          topic, mjson,
+                                          ipaddr_anon, ipaddr_changed)
+          except KeyError:
+              pass
+
 
           with mutex:
               processed += 1
