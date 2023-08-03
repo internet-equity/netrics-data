@@ -14,6 +14,8 @@ from threading import Thread, Lock
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
 
+date_to_process_after = "20230401"
+
 influxclient = None
 if os.environ.get("INFLUXDB_TOKEN") is not None:
     bucket = "netrics-prod0"
@@ -71,7 +73,6 @@ mapd = {}
 speedtest_csvfile_prefix = "netrics_speedtest"
 latency_csvfile_prefix = "netrics_latency"
 counter_csvfile_prefix = "netrics_counter"
-survey_csvfile_prefix = "netrics_survey"
 
 iperf3_target = 'abbott.cs.chicago.edu'
 
@@ -104,7 +105,10 @@ def t_topic(d):
 with open(mapf, 'r') as f:
   reader = csv.reader(f)
   for r in reader:
+    try:
       mapd[r[0]]=[ r[1], r[2], r[3] ]
+    except IndexError as ie:
+        print(f"ERROR: {ie} [{r}]")
 
 ### speedtest
 #  time        TIMESTAMPTZ       NOT NULL,
@@ -132,6 +136,133 @@ with open(mapf, 'r') as f:
 #  isp         TEXT              NULL,
 #  value       DOUBLE PRECISION  NULL
 
+def clean(msg):
+    if msg is not None:
+        if type(msg) is not str:
+            msg = f"{msg}"
+        msg = msg.replace("\n"," ")
+        msg = msg.replace("\r"," ")
+    return msg
+
+
+def netrics_csvwrite_httping(latency_writer,
+                                  mtime, id, topic, mjson,
+                                  ipaddr_anon, ipaddr_changed):
+  """
+  Write CSV for HTTPing test
+
+  :param latency_writer: csvwriter ref
+  :param mtime: measurement timestamp
+  :param id: device id
+  :param m: measurement json
+  """
+  to_return = True
+  target = None
+  direction = "rtt"
+  protocol = "http"
+  pktloss = None
+  target = None
+  for k in mjson.keys():
+    target=k.split("_")[0]
+
+    try:
+        target=k.split("_")[0]
+        float(mjson[k])
+    except (ValueError, IndexError) as ve:
+        row = [mtime, id, 'httping', direction, protocol, target, pktloss,
+              None, t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson[k])]
+        latency_writer.writerow(row)
+        pass
+        continue
+ 
+    try:
+        method=k.split("_")[2]
+        row = [mtime, id, 'httping', direction, protocol, target, pktloss,
+              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
+        latency_writer.writerow(row)    
+    except (KeyError, IndexError):
+      pass
+      continue 
+
+def netrics_csvwrite_encrypteddns(latency_writer,
+                                  mtime, id, topic, mjson,
+                                  ipaddr_anon, ipaddr_changed):
+  """
+  Write CSV for Encrypted DNS test (dig command)
+
+  :param latency_writer: csvwriter ref
+  :param mtime: measurement timestamp
+  :param id: device id
+  :param m: measurement json
+  """
+  to_return = True
+  target = None
+  direction = "rtt"
+  protocol = "dns"
+  method = "dig"
+  pktloss = None
+  for k in mjson.keys():
+    if k.endswith("_encrypted_dns_latency"):
+      target=k.split("_encrypted_dns_latency")[0]
+
+    try:
+        float(mjson[k])
+    except ValueError as ve:
+        row = [mtime, id, 'encrypteddns', direction, protocol, target, pktloss,
+              method, t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson[k])]
+        latency_writer.writerow(row)
+        pass
+        continue
+ 
+    try:
+        row = [mtime, id, 'encrypteddns', direction, protocol, target, pktloss,
+              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
+        latency_writer.writerow(row)    
+    except (KeyError, IndexError):
+      pass
+      continue 
+
+
+def netrics_csvwrite_goresp(speedtest_writer,
+                            counter_writer,
+                            mtime, id, topic, mjson,
+                            ipaddr_anon, ipaddr_changed):
+  """
+  Write CSV for GoResponsiveness measurement against abbott server
+
+  :param speedtest_writer: csvwriter ref
+  :param counter_writer: csvwriter ref
+  :param mtime: measurement timestamp
+  :param id: device id
+  :param m: measurement json
+  """
+  for k in mjson.keys():
+
+    target = iperf3_target
+    if k.endswith('_error'):
+      row = [mtime, id, 'goresponsiveness', None, target,
+                          t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson[k])]
+      counter_writer.writerow(row)
+      break
+    if k == 'default_goresp_rpm_mean':
+      method = "mean"
+      row = [mtime, id, 'goresponsiveness', method, target,
+                          t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
+      counter_writer.writerow(row)
+    if k == 'default_goresp_rpm_p90':
+      method = "p90"
+      row = [mtime, id, 'goresponsiveness', method, target,
+                          t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
+      counter_writer.writerow(row)
+    if k == 'default_goresp_download_speed':
+      row = [mtime, id, 'goresponsiveness', 'download', 'tcp', target, None,
+                    None, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
+      speedtest_writer.writerow(row)
+    if k == 'default_goresp_upload_speed':
+      row = [mtime, id, 'goresponsiveness', 'upload', 'tcp', target, None,
+                    None, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
+      speedtest_writer.writerow(row) 
+
 
 
 def netrics_csvwrite_hopstotarget(counter_writer,
@@ -147,11 +278,18 @@ def netrics_csvwrite_hopstotarget(counter_writer,
   :param m: measurement json
   """
   for k in mjson.keys():
+    if k.endswith("_error"):
+      target = k.split("_")[0]
+      row = [mtime, id, 'hops_to_target', None, target,
+             t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson[k])]
+      counter_writer.writerow(row)
+
+
     if "hops_to_" in k:
       target = k.split("_")[2]
       method = "tr"
       row = [mtime, id, 'hops_to_target', method, target,
-                          t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+             t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
       counter_writer.writerow(row)
 
 def netrics_csvwrite_connecteddev(counter_writer,
@@ -171,12 +309,12 @@ def netrics_csvwrite_connecteddev(counter_writer,
       target = None
       method = k.split("_")[1]
       row = [mtime, id, 'connected_devices_arp', method, target,
-                          t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+             t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
       counter_writer.writerow(row)
 
 
 
-def netrics_csvwrite_lastmile(speedtest_writer, latency_writer,
+def netrics_csvwrite_lastmile(latency_writer,
                                   mtime, id, topic, mjson,
                                   ipaddr_anon, ipaddr_changed):
   """
@@ -188,18 +326,26 @@ def netrics_csvwrite_lastmile(speedtest_writer, latency_writer,
   :param id: device id
   :param m: measurement json
   """
-  pktloss = 0
+  pktloss = None
   for k in mjson.keys():
     if "packet_loss" in k:
       pktloss = mjson[k]
       break
   
   for k in mjson.keys():
+    direction = "rtt"
+    protocol = "icmp"
+     
     key=k.split("_")
+
+    target = key[0]
+    if k.endswith("_error"):
+      row = [mtime, id, 'last_mile_rtt', direction, protocol, target, pktloss,
+              None, t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson[k])]
+      latency_writer.writerow(row)
+      continue
+ 
     try:
-      target = key[0]
-      direction = "rtt"
-      protocol = "icmp"
       method1 = key[len(key)-4] 
       method2 = key[len(key)-2]
       if method2 == "loss": continue
@@ -211,7 +357,7 @@ def netrics_csvwrite_lastmile(speedtest_writer, latency_writer,
           return
 
       row = [mtime, id, 'last_mile_rtt', direction, protocol, target, pktloss,
-              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
       latency_writer.writerow(row)
     except IndexError:
       pass
@@ -229,6 +375,18 @@ def netrics_csvwrite_iperf3(speedtest_writer, latency_writer,
   :param id: device id
   :param m: measurement json
   """
+  if 'error' in mjson.keys():
+    if mjson['error']:
+        errormsg = "unknown"
+        if 'iperf_download_error' in mjson.keys():
+           errormsg = mjson['iperf_download_error']
+        if 'iperf_upload_error' in mjson.keys():
+           errormsg = mjson['iperf_download_error']
+        row = [mtime, id, 'iperf3', None, None, iperf3_target, None,
+               None, t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(errormsg)]
+        speedtest_writer.writerow(row)
+        return
+
   for k in mjson.keys():
     key=k.split("_")
     try:
@@ -238,7 +396,7 @@ def netrics_csvwrite_iperf3(speedtest_writer, latency_writer,
         target = iperf3_target
         method = key[3]
         row = [mtime, id, 'iperf3', direction, protocol, target, None,
-              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
         latency_writer.writerow(row)
         continue
       elif key[2] == "download" and key[3] == "jitter":
@@ -247,7 +405,7 @@ def netrics_csvwrite_iperf3(speedtest_writer, latency_writer,
         target = iperf3_target
         method = key[3]
         row = [mtime, id, 'iperf3', direction, protocol, target, None,
-              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
         latency_writer.writerow(row)
         continue
     except IndexError:
@@ -255,16 +413,16 @@ def netrics_csvwrite_iperf3(speedtest_writer, latency_writer,
     try:
       if key[2] == "upload" and key[1] == "udp":
         row = [mtime, id, 'iperf3', 'upload', 'udp', iperf3_target, None,
-                    None, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+                    None, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
         speedtest_writer.writerow(row)
       elif key[2] == "download" and key[1] == "udp":
         row = [mtime, id, 'iperf3', 'download', 'udp', iperf3_target, None,
-                    None, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+                    None, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
         speedtest_writer.writerow(row)
     except IndexError:
       pass
 
-def netrics_csvwrite_pinglatency(speedtest_writer, latency_writer,
+def netrics_csvwrite_pinglatency(latency_writer,
                                   mtime, id, topic, mjson,
                                   ipaddr_anon, ipaddr_changed):
   """
@@ -298,16 +456,24 @@ def netrics_csvwrite_pinglatency(speedtest_writer, latency_writer,
         target = key[0]
         direction = "rtt"
         protocol = "icmp"
-        method = key[2]
+        error = 0
+        errormsg = None
+        value = mjson[k]
+        if k.endswith("_error"):
+            error = 1
+            value = None
+            errormsg = mjson[k]
+        else:
+            method = key[2]
         pktloss_csv = pktloss[target]
         row = [mtime, id, 'ping_latency', direction, protocol, target, pktloss_csv,
-              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+              method, t_zip(id), t_isp(id), value, topic, ipaddr_anon, ipaddr_changed, error, clean(errormsg)]
         latency_writer.writerow(row)    
     except (KeyError, IndexError):
       pass
       continue 
 
-def netrics_csvwrite_dnslatency(speedtest_writer, latency_writer,
+def netrics_csvwrite_dnslatency(latency_writer,
                                   mtime, id, topic, mjson,
                                   ipaddr_anon, ipaddr_changed):
   """
@@ -321,14 +487,20 @@ def netrics_csvwrite_dnslatency(speedtest_writer, latency_writer,
   """
   for k in mjson.keys():
       try:
+          target = DNS_LATENCY_TARGET
+          direction = "rtt"
+          protocol = "icmp"
+          if k.endswith("_error"):
+             row = [mtime, id, 'dns_latency', direction, protocol, target, None,
+                    None, t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson[k])]
+             latency_writer.writerow(row)
+             continue
+ 
           m=re.search(r"^dns_query_([a-z]+)_ms", k)
           if m is not None:
-             target = DNS_LATENCY_TARGET
-             direction = "rtt"
-             protocol = "icmp"
              method = m.group(1)
              row = [mtime, id, 'dns_latency', direction, protocol, target, None,
-                    method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+                    method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
              latency_writer.writerow(row)
       except (KeyError, IndexError):
           pass
@@ -346,6 +518,19 @@ def netrics_csvwrite_oplat(speedtest_writer, latency_writer,
   :param id: device id
   :param m: measurement json
   """
+
+  if 'error' in mjson.keys():
+    errormsg = 'unknown'
+    target = None
+    for k in mjson.keys():
+      if k.endswith("_error"): 
+          errormsg = mjson[k]
+          target=k.split("_")[0]
+      row = [mtime, id, 'oplat', None, None, target, None,
+             None, t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(errormsg)]
+      latency_writer.writerow(row)
+      return
+
   to_return = True
   pktloss = {}
   for k in mjson.keys():
@@ -376,7 +561,7 @@ def netrics_csvwrite_oplat(speedtest_writer, latency_writer,
       direction = "download" if key[len(key)-1] == "dl" else "upload" 
       pktloss_csv = pktloss[method][protocol][direction]
       row = [mtime, id, 'oplat', direction, protocol, target, pktloss_csv,
-             method_csv, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed]
+             method_csv, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
       latency_writer.writerow(row)
 
 def netrics_csvwrite_ndt7(speedtest_writer, latency_writer,
@@ -392,6 +577,7 @@ def netrics_csvwrite_ndt7(speedtest_writer, latency_writer,
   :param id: device id
   :param m: measurement json
   """
+
   target = ""
   retrans = 0.0
   try:
@@ -405,10 +591,19 @@ def netrics_csvwrite_ndt7(speedtest_writer, latency_writer,
       print(f"WARNING: speedtest_ndt7_downloadretrans not present")
       pass
 
+  if 'ndt_error' in mjson.keys():
+    if mjson['ndt_error']:
+        row = [mtime, id, 'ndt7', None, None, target, None,
+                      None, t_zip(id), t_isp(id),
+                      None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson['error'])]
+        speedtest_writer.writerow(row)
+        return
+
+
   if(mjson['speedtest_ndt7_download'] > 0.0):
     row = [mtime, id, 'ndt7', 'download', 'tcp', target, None,
                    retrans, t_zip(id), t_isp(id),
-                   mjson['speedtest_ndt7_download'], topic, ipaddr_anon, ipaddr_changed]
+                   mjson['speedtest_ndt7_download'], topic, ipaddr_anon, ipaddr_changed, 0, None]
     speedtest_writer.writerow(row)
   else:
     print(f"WARNING: speedtest_ndt7_download == 0")
@@ -416,7 +611,7 @@ def netrics_csvwrite_ndt7(speedtest_writer, latency_writer,
   if(mjson['speedtest_ndt7_upload'] > 0.0):
     row = [mtime, id, 'ndt7', 'upload', 'tcp', target, None,
                   retrans, t_zip(id), t_isp(id),
-                  mjson['speedtest_ndt7_upload'], topic, ipaddr_anon, ipaddr_changed]
+                  mjson['speedtest_ndt7_upload'], topic, ipaddr_anon, ipaddr_changed, 0, None]
     speedtest_writer.writerow(row)
   else:
     print(f"WARNING: speedtest_ndt7_upload == 0")
@@ -424,7 +619,7 @@ def netrics_csvwrite_ndt7(speedtest_writer, latency_writer,
   if(mjson['speedtest_ndt7_downloadlatency'] > 0.0):
     row = [mtime, id, 'ndt7', 'rtt', 'tcp', target, None,
                   'avg', t_zip(id), t_isp(id),
-                  mjson['speedtest_ndt7_downloadlatency'], topic, ipaddr_anon, ipaddr_changed]
+                  mjson['speedtest_ndt7_downloadlatency'], topic, ipaddr_anon, ipaddr_changed, 0, None]
     latency_writer.writerow(row)
   else:
     print(f"WARNING: speedtest_ndt7_downloadlatency == 0")
@@ -455,11 +650,22 @@ def netrics_csvwrite_ookla(speedtest_writer, latency_writer,
   except:
       print(f"WARNING: speedtest_ookla_pktloss2 not present")
       pass
-  
+
+  if 'ookla_error' in mjson.keys():
+    if mjson['ookla_error']:
+      if mjson['error'].startswith("==="): #license agreement, skip
+          return
+      else:
+          row = [mtime, id, 'ookla', None, None, None, None,
+                 None, t_zip(id), t_isp(id),
+                 None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson['error'])]
+          speedtest_writer.writerow(row)
+          return
+
   if(mjson['speedtest_ookla_download'] > 0.0):
     row = [mtime, id, 'ookla', 'download', 'tcp', target, pktloss,
                    None, t_zip(id), t_isp(id),
-                   mjson['speedtest_ookla_download'], topic, ipaddr_anon, ipaddr_changed]
+                   mjson['speedtest_ookla_download'], topic, ipaddr_anon, ipaddr_changed, 0, None]
     speedtest_writer.writerow(row)
   else:
     print(f"WARNING: speedtest_ookla_download == 0")
@@ -467,7 +673,7 @@ def netrics_csvwrite_ookla(speedtest_writer, latency_writer,
   if(mjson['speedtest_ookla_upload'] > 0.0):
     row = [mtime, id, 'ookla', 'upload', 'tcp', target, pktloss,
                   None, t_zip(id), t_isp(id),
-                  mjson['speedtest_ookla_upload'], topic, ipaddr_anon, ipaddr_changed]
+                  mjson['speedtest_ookla_upload'], topic, ipaddr_anon, ipaddr_changed, 0, None]
     speedtest_writer.writerow(row)
   else:
     print(f"WARNING: speedtest_ookla_upload == 0")
@@ -475,7 +681,7 @@ def netrics_csvwrite_ookla(speedtest_writer, latency_writer,
   if(mjson['speedtest_ookla_latency'] > 0.0):
     row = [mtime, id, 'ookla', 'rtt', 'tcp', target, None,
                  'avg', t_zip(id), t_isp(id),
-                  mjson['speedtest_ookla_latency'], topic, ipaddr_anon, ipaddr_changed]
+                  mjson['speedtest_ookla_latency'], topic, ipaddr_anon, ipaddr_changed, 0, None]
     latency_writer.writerow(row)
   else:
     print(f"WARNING: speedtest_ookla_latency == 0")
@@ -483,7 +689,7 @@ def netrics_csvwrite_ookla(speedtest_writer, latency_writer,
   if(mjson['speedtest_ookla_jitter'] > 0.0):
     row = [mtime, id, 'ookla', 'rtt', 'tcp', target, None,
                  'jitter', t_zip(id), t_isp(id),
-                  mjson['speedtest_ookla_jitter'], topic, ipaddr_anon, ipaddr_changed]
+                  mjson['speedtest_ookla_jitter'], topic, ipaddr_anon, ipaddr_changed, 0, None]
     latency_writer.writerow(row)
   else:
     print(f"WARNING: speedtest_ookla_jitter == 0")
@@ -492,13 +698,13 @@ def netrics_csvwrite_ookla(speedtest_writer, latency_writer,
 
 speedtest_header = ['time', 'deviceid', 'tool', 'direction',
                     'protocol', 'target', 'pktloss', 'retrans',
-                    'zip', 'isp', 'value', 'topic', 'anonipaddr', 'ipaddrchanged']
+                    'zip', 'isp', 'value', 'topic', 'anonipaddr', 'ipaddrchanged', 'error', 'errormsg']
 latency_header = ['time', 'deviceid', 'tool', 'direction',
                   'protocol', 'target', 'pktloss','method',
-                  'zip', 'isp', 'value', 'topic', 'anonipaddr', 'ipaddrchanged']
+                  'zip', 'isp', 'value', 'topic', 'anonipaddr', 'ipaddrchanged', 'error', 'errormsg']
 
 counter_header = ['time', 'deviceid', 'tool', 'method', 'target',
-                                'zip', 'isp', 'value', 'topic', 'anonipaddr', 'ipaddrchanged']
+                                'zip', 'isp', 'value', 'topic', 'anonipaddr', 'ipaddrchanged', 'error', 'errormsg']
 
 
 try:
@@ -617,7 +823,7 @@ def process_jsongz(fd, topic, speedtest_writer):
 
         row = [ts, id, 'local_dash_server', 'download', 'tcp', 'netrics.local',
                None, None, t_zip(id), t_isp(id),
-               wifi_bw, topic, None, None]
+               wifi_bw, topic, None, None, 0, None]
         speedtest_writer.writerow(row)
 
 
@@ -643,7 +849,7 @@ def process_csvgz(fd, topic, speedtest_writer, counter_writer):
                         continue
                     row = [ts, id, 'local_dash_client', 'download', 'tcp', 'netrics.local',
                            None, None, t_zip(id), t_isp(id),
-                           8 * size_bytes / period_ms, topic, None, None]
+                           8 * size_bytes / period_ms, topic, None, None, 0, None]
                     speedtest_writer.writerow(row)
             if fd['topic'] == 'survey':
                 for r in records:
@@ -654,7 +860,7 @@ def process_csvgz(fd, topic, speedtest_writer, counter_writer):
                         print(f"WARN: trial data error {fd['jfile']}")
                         continue
                     row = [ts, id, 'score', 'subjective', None,
-                           t_zip(id), t_isp(id), subjective, topic, None, None]
+                           t_zip(id), t_isp(id), subjective, topic, None, None, 0, None]
                     counter_writer.writerow(row)
         except EOFError as eof:
             print(f"WARN: error reading {fd['jfile']}")
@@ -740,6 +946,9 @@ def thread_csv_month(d, cw):
       #topic = fd['topic']
       topic = t_topic(dev)
       ftype = fd['ftype']
+
+      d1 = datetime.strptime(date, "%Y%m%d")
+      #if d1 < datetime.strptime(date_to_process_after, "%Y%m%d"): continue
 
       if fd['ftype'] == 'json' and influxclient is not None:
           insert_influx(jfile)
@@ -841,8 +1050,7 @@ def thread_csv_month(d, cw):
           ################ PING_LATENCY #################
           try:
               mjson = j['Measurements']['ping_latency']
-              netrics_csvwrite_pinglatency(speedtest_csvwriter,
-                                           latency_csvwriter,
+              netrics_csvwrite_pinglatency(latency_csvwriter,
                                            utc, id,
                                            topic, mjson,
                                            ipaddr_anon, ipaddr_changed)
@@ -853,8 +1061,7 @@ def thread_csv_month(d, cw):
           ################ DNS_LATENCY #################
           try:
               mjson = j['Measurements']['dns_latency']
-              netrics_csvwrite_dnslatency(speedtest_csvwriter,
-                                           latency_csvwriter,
+              netrics_csvwrite_dnslatency(latency_csvwriter,
                                            utc, id,
                                            topic, mjson,
                                            ipaddr_anon, ipaddr_changed)
@@ -876,8 +1083,7 @@ def thread_csv_month(d, cw):
           ################ LAST MILE #################
           try:
               mjson = j['Measurements']['last_mile_rtt']
-              netrics_csvwrite_lastmile(speedtest_csvwriter,
-                                        latency_csvwriter,
+              netrics_csvwrite_lastmile(latency_csvwriter,
                                           utc, id,
                                           topic, mjson,
                                           ipaddr_anon, ipaddr_changed)
@@ -904,6 +1110,40 @@ def thread_csv_month(d, cw):
                                           ipaddr_anon, ipaddr_changed)
           except KeyError:
               pass
+
+
+          ############# GORESPONSIVENESS (RPM) ############
+          try:
+              mjson = j['Measurements']['goresp']
+              netrics_csvwrite_goresp(speedtest_csvwriter,
+                                          counter_csvwriter,
+                                          utc, id,
+                                          topic, mjson,
+                                          ipaddr_anon, ipaddr_changed)
+          except KeyError:
+              pass
+
+
+          ############# ENCRYPTED DNS ############
+          try:
+              mjson = j['Measurements']['encrypteddns']
+              netrics_csvwrite_encrypteddns(latency_csvwriter,
+                                          utc, id,
+                                          topic, mjson,
+                                          ipaddr_anon, ipaddr_changed)
+          except KeyError:
+              pass
+
+          ############# HTTPING ############
+          try:
+              mjson = j['Measurements']['httping']
+              netrics_csvwrite_httping(latency_csvwriter,
+                                          utc, id,
+                                          topic, mjson,
+                                          ipaddr_anon, ipaddr_changed)
+          except KeyError:
+              pass
+
 
           with mutex:
               processed += 1

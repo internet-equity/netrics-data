@@ -10,7 +10,7 @@ The measurement data is divided into 3 types of CSV files:
 
 * Latency
 * Speedtest
-* Counters
+* Counters/Score
 
 #### Latency
 
@@ -26,6 +26,8 @@ The available tools for latency are:
 | [ping_latency](https://github.com/iputils/iputils) | This is an ICMP roundtrip time (RTT) measurement taken with a standard "ping" tool targeting multiple sites | Every 5 minutes |
 | [dns_latency](https://github.com/iputils/iputils)  | This is an ICMP roundtrip time (RTT) measurement taken with a standard "ping" tool targeting common DNS sites (8.8.8.8, 1.1.1.1) | Every 5 minutes |
 | [oplat](https://github.com/kyle-macmillan/OpLat)  | This is a tool designed to measure Latency-Under-Load (LUL) and it combines RTT "ping" with the network traffic load created by iperf | Along with Speedtest (1 to 5 times a day) |
+| [encrypteddns](https://github.com/internet-equity/nm-exp-active-netrics/blob/main/src/netrics/plugins/plugin_encrypteddns.py)  | Encrypted DNS test with the `dig` tool running against selected targets | 3 times a day |
+| [httping](https://github.com/internet-equity/nm-exp-active-netrics/blob/main/src/netrics/plugins/plugin_httping.py)  | HTTPing tool measuring http latency via HEAD command | Every 5 minutes |
 
 #### Speedtest
 
@@ -43,8 +45,9 @@ The available tools for speedtest are:
 | [iperf3](https://iperf.fr/iperf-download.php)  | The standard iperf3 tool | 1 to 5 times a day |
 | [local_dash_client](https://github.com/chicago-cdac/netrics-dash) | Netrics Local Dashboard (Ndt7 client reading) | Eventually |
 | [local_dash_server](https://github.com/chicago-cdac/netrics-dash) | Netrics Local Dashboard (Ndt7 server reading) | Eventually |
+| [goresp](https://github.com/network-quality/goresponsiveness) | GoResponsiveness (RPM) tool, throughput measurement | 3 times a day |
 
-#### Counters
+#### Counters / Score
 
 The Coutner measuments is structured as follows:
 
@@ -58,6 +61,8 @@ The available tools for counters are:
 | [hops_to_target](https://github.com/openbsd/src/blob/master/usr.sbin/traceroute/traceroute.c) | The number of network hops necessary to reach a network targeted  | Every 5 minutes |
 | [connected_devices_arp](https://github.com/nmap/nmap)  | The number of connected devices connected to the network | Every 5 minutes |
 | [score](https://github.com/chicago-cdac/netrics-dash)  | Subjective opinion score (*)| Eventually |
+| [goresp](https://github.com/internet-equity/nm-exp-active-netrics/blob/main/src/netrics/plugins/plugin_httping.py)  | GoResponsiveness RPM score | 3 times a day |
+
 
 (*) 0 = Good, 1 = Slow, 2 = Unusable
 
@@ -89,6 +94,13 @@ The available tools for counters are:
 
 7. **Speed Tests** (`netrics_speedtest_20YYMMDD.csv, tool=="ookla", tool=="ndt7", tool=="iperf3"`): A household's wired Internet upload and download bandwidth in megabits per second (Mbps). Internet bandwidth is a measure of how fast your Internet connection is. The more bandwidth that your Internet connection has, the more information it can handle at any given time and the faster it can send that information. We measure Internet bandwidth using three popular tools—Ookla, NDT7, and iPerf3.
 
+8. **HTTPing** (`netrics_latency_20YYMMDD.csv, tool=="httping"`): Latency measurements taken with the HTTPing tool against sites: facebook, wikipedia, youtube, amazon and google. As opposed to ping_latency, this tool uses the same protocol utilized to actually access the web content provided by the servers (HTTP/TCP). It is expected to better reflect the actual user latency to/from common websites.
+
+9. **GoResponsiveness** (`netrics_counter_20YYMMDD.csv`, `netrics_speedtest_20YYMMDD.csv`, tool=="goresp"): This is the Go implementation of the ` draft-ietf-ippm-responsiveness` document, a series of techniques combined together to produce an index (RPM or "Round-trips per Minute" score) that tells us how resposive is our connection. The higher the number (score) the more reponsive is the link. It produces "working conditions" through a throughput test that runs in parallel with the round-trip measurements. This test is currently running against a local UChicago Server (abbott).
+
+10. **Encrypted DNS** (`netrics_latency_20YYMMDD.csv`, tool=="encrypteddns"): Is an Encrypted DNS test that uses `dig` command as a tool. It measures the latency of multiple encrypted dns recursors against selected targets.
+
+
 ## Measurement Data Dictionary
 
 In this section we describe each field of each CSV (measurement). **Note on time zones** All times in each file are in UTC standard format.
@@ -110,7 +122,8 @@ In this section we describe each field of each CSV (measurement). **Note on time
 12. `topic`: Topic refers to the deployment. Options include `chicago` (chicago city), `schools` (Chicago Public Schools, aka CPS), etc.
 13. `anonipaddr`: Anonymized IP address (eg. 1.2.3.4 -> 1.2.3.0).
 14. `ipaddrchanged`: Boolean flag 1:true 0:false indicating whether the IP changed since the last measurement.
-
+15. `error`: Boolean marking the test as `error`.
+16. `errormsg`: Error message coming from the command's output
 
 ### [Speedtest (netrics_speedtest_20YYMMDD.csv)](#measurement-data):
 
@@ -128,7 +141,8 @@ In this section we describe each field of each CSV (measurement). **Note on time
 12. `topic`: Topic refers to the deployment. Options include `chicago` (chicago city), `schools` (Chicago Public Schools, aka CPS), etc.
 13. `anonipaddr`: Anonymized IP address (eg. 1.2.3.4 -> 1.2.3.0).
 14. `ipaddrchanged`: Boolean flag 1:true 0:false indicating whether the IP changed since the last measurement.
-
+15. `error`: Boolean marking the test as `error`.
+16. `errormsg`: Error message coming from the command's output
 
 ### [Counters (netrics_counter_20YYMMDD.csv)](#measurement-data):
 
@@ -144,6 +158,9 @@ In this section we describe each field of each CSV (measurement). **Note on time
 12. `topic`: Topic refers to the deployment. Options include `chicago` (chicago city), `schools` (Chicago Public Schools, aka CPS), etc.
 13. `anonipaddr`: Anonymized IP address (eg. 1.2.3.4 -> 1.2.3.0).
 14. `ipaddrchanged`: Boolean flag 1:true 0:false indicating whether the IP changed since the last measurement.
+15. `error`: Boolean marking the test as `error`.
+16. `errormsg`: Error message coming from the command's output
+
 
 ## Geograhpic and Survey Data
 
