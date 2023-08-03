@@ -1,0 +1,99 @@
+device_id,ISP,reported_speed_tier,access_technology,has_wifi_extenders,num_wifi_extenders,internet_cost,community
+e01c,RCN (Astound),51 - 200 Mbps,combination router/modem,No,,Greater than $80,DOUGLAS
+40d7,Xfinity (Comcast),201 - 400 Mbps,combination router/modem,No,,Greater than $80,MOUNT GREENWOOD
+05f0,Xfinity (Comcast),up to 50 Mbps,combination router/modem,No,,Less than $20,BRIDGEPORT
+98ab,Xfinity (Comcast),,combination router/modem,Yes,1,Between $21 and $40,ALBANY PARK
+32b5,Xfinity (Comcast),51 - 200 Mbps,router only,No,,Between $41 and $60,ALBANY PARK
+1185,AT&T,up to 50 Mbps,router only,No,,Between $21 and $40,WEST RIDGE
+086d,Xfinity (Comcast),51 - 200 Mbps,separate modem and router,No,,Between $41 and $60,LOWER WEST SIDE
+f7da,Xfinity (Comcast),51 - 200 Mbps,separate modem and router,No,,Between $41 and $60,HUMBOLDT PARK
+de6b,Wow!,401 - 800 Mbps,combination router/modem,No,,Between $41 and $60,EAST SIDE
+5bfc,Xfinity (Comcast),up to 50 Mbps,combination router/modem,,,,BRIGHTON PARK
+2316,RCN (Astound),401 - 800 Mbps,separate modem and router,Yes,2,Between $41 and $60,UPTOWN
+1f49,RCN (Astound),401 - 800 Mbps,combination router/modem,No,,Greater than $80,UPTOWN
+4a29,AT&T,up to 50 Mbps,combination router/modem,Yes,1,Greater than $80,UPTOWN
+ef46,Xfinity (Comcast),51 - 200 Mbps,combination router/modem,Yes,1,Greater than $80,LOGAN SQUARE
+be58,AT&T,,,No,,Between $41 and $60,LOGAN SQUARE
+47bf,AT&T,801 - 1200 Mbps ,combination router/modem,No,,Between $61 and $80,LOGAN SQUARE
+8cb2,AT&T,up to 50 Mbps,combination router/modem,No,,Between $61 and $80,LOGAN SQUARE
+546b,AT&T,401 - 800 Mbps,separate modem and router,Yes,1,Between $61 and $80,LOGAN SQUARE
+3932,Xfinity (Comcast),51 - 200 Mbps,,No,,Greater than $80,LOGAN SQUARE
+2afe,Xfinity (Comcast),201 - 400 Mbps,separate modem and router,Yes,1,Between $61 and $80,LOGAN SQUARE
+f51f,AT&T,201 - 400 Mbps,separate modem and router,Yes,2,Between $41 and $60,LOGAN SQUARE
+8b9f,Xfinity (Comcast),201 - 400 Mbps,separate modem and router,No,,Greater than $80,LOGAN SQUARE
+c367,Xfinity (Comcast),,separate modem and router,Yes,1,Greater than $80,LOGAN SQUARE
+dfa4,Xfinity (Comcast),,separate modem and router,,,,LOGAN SQUARE
+6b53,AT&T,801 - 1200 Mbps ,combination router/modem,No,,Between $61 and $80,LOGAN SQUARE
+adcd,Xfinity (Comcast),,separate modem and router,,,,LOGAN SQUARE
+c8bd,AT&T,801 - 1200 Mbps ,combination router/modem,No,,Greater than $80,LOGAN SQUARE
+ce31,AT&T,801 - 1200 Mbps ,separate modem and router,Yes,1,Greater than $80,LOGAN SQUARE
+ba43,AT&T,201 - 400 Mbps,combination router/modem,No,,Between $41 and $60,LOGAN SQUARE
+6bf1,Xfinity (Comcast),401 - 800 Mbps,combination router/modem,No,,Between $41 and $60,LOGAN SQUARE
+1dc2,Xfinity (Comcast),801 - 1200 Mbps ,combination router/modem,No,,Greater than $80,LOGAN SQUARE
+9041,AT&T,201 - 400 Mbps,combination router/modem,No,,Between $41 and $60,LOGAN SQUARE
+cfed,Xfinity (Comcast),up to 50 Mbps,combination router/modem,No,,Between $21 and $40,LOGAN SQUARE
+4c9a,Xfinity (Comcast),51 - 200 Mbps,separate modem and router,No,,Between $61 and $80,LOGAN SQUARE
+6753,Everywhere Wireless,801 - 1200 Mbps ,router only,Yes,1,Between $21 and $40,LOGAN SQUARE
+1347,Xfinity (Comcast),801 - 1200 Mbps ,combination router/modem,Yes,3 or more,Greater than $80,LOGAN SQUARE
+a69b,Verizon,51 - 200 Mbps,combination router/modem,No,,Between $21 and $40,LOGAN SQUARE
+c38c,Xfinity (Comcast),401 - 800 Mbps,combination router/modem,No,,Between $61 and $80,LOGAN SQUARE
+3ac0,AT&T,801 - 1200 Mbps ,combination router/modem,Yes,3 or more,Greater than $80,LOGAN SQUARE
+71c4,Xfinity (Comcast),801 - 1200 Mbps ,combination router/modem,Yes,1,Between $61 and $80,LOGAN SQUARE
+a3d5,Xfinity (Comcast),401 - 800 Mbps,combination router/modem,No,,Between $61 and $80,LOGAN SQUARE
+0b6f,Xfinity (Comcast),201 - 400 Mbps,combination router/modem,No,,Between $41 and $60,LOGAN SQUARE
+4a4d,AT&T,801 - 1200 Mbps ,,No,,Between $41 and $60,LOGAN SQUARE
+4f71,Xfinity (Comcast),up to 50 Mbps,separate modem and router,No,,Less than $20,LAKE VIEW
+925c,Xfinity (Comcast),51 - 200 Mbps,separate modem and router,No,,Between $61 and $80,LAKE VIEW
+dfb9,Xfinity (Comcast),401 - 800 Mbps,combination router/modem,No,,Between $61 and $80,LAKE VIEW
+5a32,AT&T,,combination router/modem,No,,Between $41 and $60,LAKE VIEW
+78f4,Everywhere Wireless,401 - 800 Mbps,router only,No,,Less than $20,LOOP
+a28a,Google WebPass,51 - 200 Mbps,router only,No,,Between $41 and $60,LOOP
+14b8,RCN (Astound),up to 50 Mbps,combination router/modem,No,,Greater than $80,LOOP
+e38c,Xfinity (Comcast),201 - 400 Mbps,combination router/modem,No,,Between $61 and $80,AVONDALE
+c7af,Xfinity (Comcast),51 - 200 Mbps,separate modem and router,,,Between $41 and $60,AVONDALE
+72f4,Xfinity (Comcast),201 - 400 Mbps,combination router/modem,No,,Between $41 and $60,AVONDALE
+ff70,Xfinity (Comcast),,,No,,Between $41 and $60,NEAR SOUTH SIDE
+f35e,Xfinity (Comcast),51 - 200 Mbps,separate modem and router,Yes,1,Between $41 and $60,AVALON PARK
+ff46,Xfinity (Comcast),201 - 400 Mbps,combination router/modem,No,,Greater than $80,BELMONT CRAGIN
+42ef,RCN (Astound),801 - 1200 Mbps ,combination router/modem,Yes,1,Between $41 and $60,EDGEWATER
+23bd,Xfinity (Comcast),,,No,,Greater than $80,LINCOLN SQUARE
+ebb9,AT&T,,combination router/modem,No,,Between $41 and $60,DUNNING
+96d3,AT&T,up to 50 Mbps,combination router/modem,No,,Less than $20,SOUTH SHORE
+1862,AT&T,up to 50 Mbps,combination router/modem,Yes,1,Between $61 and $80,SOUTH SHORE
+6ec5,Xfinity (Comcast),801 - 1200 Mbps ,combination router/modem,Yes,3 or more,Greater than $80,SOUTH SHORE
+cc37,Xfinity (Comcast),401 - 800 Mbps,separate modem and router,No,,Between $61 and $80,SOUTH SHORE
+06b9,AT&T,,combination router/modem,Yes,3 or more,Greater than $80,SOUTH SHORE
+4998,AT&T,201 - 400 Mbps,combination router/modem,Yes,1,Less than $20,SOUTH SHORE
+8da9,Xfinity (Comcast),801 - 1200 Mbps ,separate modem and router,,,,SOUTH SHORE
+44dc,AT&T,801 - 1200 Mbps ,combination router/modem,No,,Between $61 and $80,SOUTH SHORE
+08b6,AT&T,up to 50 Mbps,combination router/modem,Yes,1,Between $61 and $80,SOUTH SHORE
+f0c4,Xfinity (Comcast),51 - 200 Mbps,combination router/modem,Yes,1,Between $21 and $40,SOUTH SHORE
+4573,Xfinity (Comcast),801 - 1200 Mbps ,combination router/modem,Yes,3 or more,Between $61 and $80,SOUTH SHORE
+b217,Xfinity (Comcast),401 - 800 Mbps,combination router/modem,No,,Greater than $80,SOUTH SHORE
+1799,Xfinity (Comcast),401 - 800 Mbps,combination router/modem,No,,Greater than $80,SOUTH SHORE
+d54b,Xfinity (Comcast),401 - 800 Mbps,combination router/modem,No,,Greater than $80,SOUTH SHORE
+c0d4,AT&T,up to 50 Mbps,router only,No,,Between $61 and $80,SOUTH SHORE
+128d,AT&T,,,Yes,3 or more,Greater than $80,SOUTH SHORE
+3db3,Xfinity (Comcast),401 - 800 Mbps,separate modem and router,No,,Greater than $80,SOUTH SHORE
+5a91,Xfinity (Comcast),51 - 200 Mbps,combination router/modem,No,,Between $61 and $80,SOUTH SHORE
+265f,Xfinity (Comcast),201 - 400 Mbps,combination router/modem,Yes,3 or more,Greater than $80,SOUTH SHORE
+c71c,Xfinity (Comcast),,combination router/modem,No,,Less than $20,SOUTH SHORE
+e1bb,Xfinity (Comcast),801 - 1200 Mbps ,combination router/modem,Yes,2,Greater than $80,SOUTH SHORE
+6174,Xfinity (Comcast),801 - 1200 Mbps ,combination router/modem,No,,Greater than $80,SOUTH SHORE
+ace4,AT&T,up to 50 Mbps,combination router/modem,Yes,1,Between $41 and $60,SOUTH SHORE
+0819,AT&T,51 - 200 Mbps,combination router/modem,No,,Between $41 and $60,SOUTH SHORE
+5b68,Xfinity (Comcast),up to 50 Mbps,combination router/modem,Yes,1,Less than $20,SOUTH SHORE
+f507,AT&T,,,,,,SOUTH SHORE
+7f45,Everywhere Wireless,up to 50 Mbps,router only,No,,Between $41 and $60,NEAR NORTH SIDE
+e5b4,Xfinity (Comcast),up to 50 Mbps,combination router/modem,No,,Greater than $80,SOUTH LAWNDALE
+71d4,Xfinity (Comcast),51 - 200 Mbps,combination router/modem,No,,Between $41 and $60,SOUTH CHICAGO
+361c,Xfinity (Comcast),up to 50 Mbps,combination router/modem,No,,Between $61 and $80,GREATER GRAND CROSSING
+f852,Google Fiber,801 - 1200 Mbps ,router only,No,,Between $41 and $60,WEST TOWN
+a8df,Xfinity (Comcast),201 - 400 Mbps,separate modem and router,Yes,1,Between $41 and $60,WEST TOWN
+e77e,Xfinity (Comcast),,router only,No,,Greater than $80,ASHBURN
+2682,Wow!,51 - 200 Mbps,combination router/modem,Yes,1,Greater than $80,MORGAN PARK
+df12,Xfinity (Comcast),201 - 400 Mbps,separate modem and router,Yes,1,Between $41 and $60,HYDE PARK
+d30d,,,,,,,HYDE PARK
+65d1,Xfinity (Comcast),801 - 1200 Mbps ,combination router/modem,,,Between $61 and $80,NEW CITY
+60d3,Xfinity (Comcast),51 - 200 Mbps,separate modem and router,No,,Between $41 and $60,ENGLEWOOD
+2881,,,,,,,ENGLEWOOD
