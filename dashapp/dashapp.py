@@ -8,48 +8,16 @@ import plotly.express as px
 warnings.filterwarnings('ignore')
 
 df = pd.read_csv('grouped.csv')
-
-
-
 df.drop(columns = 'Unnamed: 0', inplace = True)
-
-
-
 df.rename(columns={"anomaly": "Point Anomalies", "date_missing_entries":"Missing Points"}, inplace=True)
-df.head()
 
-
-# ## Import and merge Change Point Calculation
-
-
-
+# Import and merge Change Point Calculation
 cp = pd.read_csv('change_points.csv')
 cp.rename(columns={"Date": "date", "Change_Pts_per_day": "Collective Anomalies"}, inplace=True)
 
-
-
-cp.head()
-
-
-
 final_df = df.merge(cp, how = 'left', on = ['date', 'deviceID', 'target'] )
-
-
-
-
 final_df['Point Anomalies'] = pd.to_numeric(final_df['Point Anomalies'], errors='coerce')
 final_df['Missing Points'] = pd.to_numeric(final_df['Missing Points'], errors='coerce')
-final_df.dtypes
-
-
-
-
-final_df['deviceID'].value_counts()
-
-
-# ## Add neighborhood, region mapping
-
-
 
 # Values for the series
 values = [
@@ -67,10 +35,6 @@ values = [
 
 # Creating the series with label "deviceID"
 deviceID_series = pd.Series(values, name="deviceID")
-deviceID_series
-
-
-
 
 # Neighborhood values
 neighborhood_values = [
@@ -89,28 +53,14 @@ neighborhood_values = [
 # Convert the series into a DataFrame and add the Neighborhood column
 deviceID_df = deviceID_series.to_frame()
 deviceID_df["Location"] = neighborhood_values
-deviceID_df
-
-
 
 # Splitting the 'Neighborhood' column into two new columns
 deviceID_df[['Neighborhood', 'Region']] = deviceID_df['Location'].str.split(' - ', expand=True)
 
 # Dropping the original 'Neighborhood' column
 deviceID_df = deviceID_df.drop(columns='Location')
-deviceID_df
-
-
-
 
 final_df = final_df.merge(deviceID_df, how = 'left', on = ['deviceID'] )
-
-
-
-
-final_df.head()
-
-
 
 import dash
 from dash import dcc
@@ -288,6 +238,7 @@ def update_table(selected_target, selected_region, start_date, end_date):
      Input('my-date-picker-range', 'start_date'),
      Input('my-date-picker-range', 'end_date')]
 )
+
 def update_plot(selected_target, selected_region, start_date, end_date):
     
     if selected_region == 'All':
@@ -334,6 +285,5 @@ def update_plot(selected_target, selected_region, start_date, end_date):
     return fig1, fig2
 
 
-
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8074)
+    app.run_server(debug=True, port=8080)
