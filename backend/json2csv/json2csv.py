@@ -14,7 +14,7 @@ from threading import Thread, Lock
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-date_to_process_after = "20230401"
+date_to_process_after = "20230701"
 
 influxclient = None
 if os.environ.get("INFLUXDB_TOKEN") is not None:
@@ -198,16 +198,22 @@ def netrics_csvwrite_encrypteddns(latency_writer,
   to_return = True
   target = None
   direction = "rtt"
-  protocol = "dns"
-  method = "dig"
   pktloss = None
   for k in mjson.keys():
+    protocol = "dns"
+    method = "dig"
+     
     if k.endswith("_encrypted_dns_latency"):
       target=k.split("_encrypted_dns_latency")[0]
 
+    if k.startswith("ping_"):
+      protocol = "icmp"
+      method = "dnsping"
+      target=k.split("ping_")[1]
+
     try:
         float(mjson[k])
-    except ValueError as ve:
+    except (ValueError, TypeError) as ve:
         row = [mtime, id, 'encrypteddns', direction, protocol, target, pktloss,
               method, t_zip(id), t_isp(id), None, topic, ipaddr_anon, ipaddr_changed, 1, clean(mjson[k])]
         latency_writer.writerow(row)
@@ -216,7 +222,7 @@ def netrics_csvwrite_encrypteddns(latency_writer,
  
     try:
         row = [mtime, id, 'encrypteddns', direction, protocol, target, pktloss,
-              method, t_zip(id), t_isp(id), mjson[k], topic, ipaddr_anon, ipaddr_changed, 0, None]
+              method, t_zip(id), t_isp(id), float(mjson[k]), topic, ipaddr_anon, ipaddr_changed, 0, None]
         latency_writer.writerow(row)    
     except (KeyError, IndexError):
       pass
@@ -948,7 +954,7 @@ def thread_csv_month(d, cw):
       ftype = fd['ftype']
 
       d1 = datetime.strptime(date, "%Y%m%d")
-      #if d1 < datetime.strptime(date_to_process_after, "%Y%m%d"): continue
+      if d1 < datetime.strptime(date_to_process_after, "%Y%m%d"): continue
 
       if fd['ftype'] == 'json' and influxclient is not None:
           insert_influx(jfile)

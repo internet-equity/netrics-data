@@ -59,4 +59,4 @@ for csvf in csvfiles:
       if writer is not None: writer.close()
     except Exception as e:
         print(f"{next_chunk}")
-        print(f"here: {e}")
+        print(f"ERROR: ({csvf}) {e}")
